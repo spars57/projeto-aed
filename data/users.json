@@ -17,6 +17,12 @@
       "username": "purvtbnrbsvnnitk",
       "password": "b'$2b$12$KshzK.Ts81JKyqWST6aYpOYuiYeH311jRtdIu9uIqkfD.Dd8vmA.2'",
       "nif": "254799221"
+    },
+    {
+      "id": "1720d0c8-be1f-4330-9798-be8cc7171d66",
+      "username": "kjbmjhvxcbjunybb",
+      "password": "b'$2b$12$JG3XsZPcGFkWzc3SzNmJ0eJvdmabr2GHeazVlOWNH6EWnNExUbg8C'",
+      "nif": "254799221"
     }
   ],
   "categories": [
@@ -31,6 +37,10 @@
     {
       "id": "99963dd8-344b-4d37-9310-3a680ca3f150",
       "name": "iqymlzpf"
+    },
+    {
+      "id": "790cb4c0-e8d4-4f61-9b33-133b9eba8cfb",
+      "name": "tpoqtifp"
     }
   ],
   "expenses": [
@@ -233,6 +243,14 @@
       "description": "Testing Expense",
       "value": 0.03122519029317683,
       "timestamp": 1681407454.76569
+    },
+    {
+      "id": "84fc8d66-f86f-450f-93cd-73140886b3a7",
+      "user_id": "bfcb2c5e-b0f3-4e25-9e97-2fa9db74abec",
+      "category_id": "c295b6d0-8eba-42a8-b420-868c8366ce32",
+      "description": "Testing Expense",
+      "value": 0.1413164391290318,
+      "timestamp": 1682629621.823092
     }
   ]
 }
