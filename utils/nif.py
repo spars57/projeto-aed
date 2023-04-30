@@ -1,6 +1,6 @@
-def validate_nif(nif: str) -> bool:
+def validate_nif(nif: int) -> bool:
     try:
-        nif = [int(v) for v in nif]
+        nif = [int(v) for v in str(nif)]
 
         if not len(nif) == 9:
             return False

@@ -8,13 +8,13 @@ TExpense = TypeVar("TExpense", bound="Expense")
 
 
 class Expense:
-    def __init__(self, user: User, category: Category, description: str, value: float, timestamp: int) -> None:
+    def __init__(self, user: User, category: Category, description: str, value: float, timestamp: float) -> None:
         self.__id: uuid4 = uuid4()
         self.__user: User = user
         self.__category: Category = category
         self.__description: str = description
         self.__value: float = value
-        self.__timestamp: int = timestamp
+        self.__timestamp: float = timestamp
 
     def get_id(self) -> uuid4:
         return self.__id
@@ -51,9 +51,9 @@ class Expense:
         self.__description = description
         return self
 
-    def get_timestamp(self) -> int:
+    def get_timestamp(self) -> float:
         return self.__timestamp
 
-    def set_timestamp(self, timestamp: int) -> TExpense:
+    def set_timestamp(self, timestamp: float) -> TExpense:
         self.__timestamp = timestamp
         return self
