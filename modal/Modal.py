@@ -25,6 +25,22 @@ class Modal:
     def get_expense_list(self) -> ExpenseList:
         return self.__expense_list
 
+
+class Modal1:
+    def __init__(self):
+        self.__user_list: UserList = UserList()
+        self.__category_list: CategoryList = CategoryList()
+        self.__expense_list: ExpenseList = ExpenseList()
+
+    def get_user_list(self) -> UserList:
+        return self.__user_list
+
+    def get_category_list(self) -> CategoryList:
+        return self.__category_list
+
+    def get_expense_list(self) -> ExpenseList:
+        return self.__expense_list
+
     def save_to_file(self, filename: str) -> bool:
         if not os.path.exists(filename):
             return False

@@ -1,17 +1,17 @@
-from classes.LinkedListItem import LinkedListItem
+from classes.Node import Node
 
 
 class LinkedList:
     def __init__(self):
-        self.__list: list[LinkedListItem] = []
+        self.__list: list[Node] = []
 
     def is_empty(self) -> bool:
         return len(self.__list) == 0
 
-    def size(self) -> bool:
-        return len(self.__list) == 0
+    def size(self) -> int:
+        return len(self.__list)
 
-    def get_first(self) -> any:
+    def get_first(self) -> Node | None:
         try:
             return self.__list[0]
         except IndexError:
@@ -29,14 +29,15 @@ class LinkedList:
         except IndexError:
             return None
 
-    def insert_first(self, item: LinkedListItem) -> None:
-        first_element = self.get_first()
+    def insert_first(self, data: any) -> None:
+        first_node: Node = self.get_first()
+        new_node = Node(data)
 
-        if first_element is not None:
-            item.set_next(first_element)
+        if first_node is not None:
+            new_node.set_node(first_node)
 
-        self.__list.insert(0, item)
+        self.__list.insert(0, new_node)
 
     def remove_first(self) -> None:
-        first = self.get_first()
-        self.__list = [item for item in self.__list if item.get_id() != first.get_id()]
+        first_node = self.get_first()
+        self.__list = [node for node in self.__list if node.get_id() != first_node.get_id()]
