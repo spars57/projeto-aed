@@ -2,11 +2,13 @@
 
 ## Métodos do Controller
 
-- Autenticação
+- Autenticação:
+
 
     login(username: str, password: str) -> bool
 
 - Criação de novas classes:
+
 
     create_user(username: str, password: str, nif: int) -> User
     create_expense(user: User, category: Category, value: float, timestamp: int, description: str = ''')
