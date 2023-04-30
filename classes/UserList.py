@@ -1,37 +1,38 @@
+from uuid import uuid4
+
+from classes.LinkedList import LinkedList
+from classes.Node import Node
 from classes.User import User
 
 
-class UserList:
-    __list: list[User] = []
+class UserList(LinkedList):
 
-    def __init__(self, value: list[User] = None):
-        if value is None:
-            value = []
-        self.__list: list[User] = value
+    def __init__(self):
+        LinkedList.__init__(self)
 
-    def add(self, user: User) -> None:
-        self.__list.append(user)
+    def get_user_by_id(self, user_id: uuid4) -> User | None:
+        first_node: Node | None = self.get_first()
 
-    def delete_by_id(self, user_id: str) -> None:
-        self.__list = [user for user in self.__list if user.get_id() != user_id]
+        if first_node is None:
+            return None
 
-    def get(self) -> list[User]:
-        return self.__list
+        for index in range(self.size()):
+            user: User | None = first_node.get_data()
+            if user.get_id() == user_id:
+                return user
+            first_node = first_node.get_node()
 
-    def get_by_id(self, user_id: str) -> User | None:
-        found: list[User] = [user for user in self.__list if user.get_id() == user_id]
-        if len(found) > 0:
-            return found[0]
-        return None
+    def get_user_by_username(self, username: str) -> User | None:
+        first_node: Node | None = self.get_first()
 
-    def get_by_username(self, username: str) -> User | None:
-        found: list[User] = [user for user in self.__list if user.get_username() == username]
-        if len(found) > 0:
-            return found[0]
-        return None
+        if first_node is None:
+            return None
 
-    def set(self, value: list[User]):
-        self.__list = value
+        for index in range(self.size()):
+            user: User | None = first_node.get_data()
 
-    def json(self) -> dict:
-        return self.__dict__
+            if user is not None and user.get_username() == username:
+                return user
+
+            first_node = first_node.get_node()
+

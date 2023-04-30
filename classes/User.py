@@ -5,11 +5,11 @@ TUser = TypeVar("TUser", bound="User")
 
 
 class User:
-    def __init__(self, username: str, password: str, nif: str) -> None:
+    def __init__(self, username: str, password: str, nif: int) -> None:
         self.__id: str = str(uuid4())
         self.__username: str = username
         self.__password: str = password
-        self.__nif: str = nif
+        self.__nif: int = nif
 
     def get_id(self) -> str:
         return self.__id
@@ -25,10 +25,10 @@ class User:
         self.__username = username
         return self
 
-    def get_nif(self) -> str:
+    def get_nif(self) -> int:
         return self.__nif
 
-    def set_nif(self, nif: str) -> TUser:
+    def set_nif(self, nif: int) -> TUser:
         self.__nif = nif
         return self
 

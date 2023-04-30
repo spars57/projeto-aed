@@ -1,35 +1,21 @@
 from classes.Category import Category
+from classes.LinkedList import LinkedList
+from classes.Node import Node
 
 
-class CategoryList:
-    def __init__(self, value: Category = None) -> None:
-        if value is None:
-            value = []
-        self.__list: list[Category] = value
+class CategoryList(LinkedList):
 
-    def add(self, category: Category) -> None:
-        self.__list.append(category)
+    def __init__(self):
+        LinkedList.__init__(self)
 
-    def delete_by_id(self, category_id: str) -> None:
-        self.__list = [category for category in self.__list if category.get_id() != category_id]
+    def get_category_by_name(self, name: str) -> Category | None:
+        first_node: Node | None = self.get_first()
 
-    def get(self) -> list[Category]:
-        return self.__list
+        if first_node is None:
+            return None
 
-    def get_by_id(self, category_id: str) -> Category | None:
-        found: list[Category] = [category for category in self.__list if category.get_id() == category_id]
-        if len(found) > 0:
-            return found[0]
-        return None
-
-    def get_by_name(self, name: str) -> Category | None:
-        found: list[Category] = [category for category in self.__list if category.get_name() == name]
-        if len(found) > 0:
-            return found[0]
-        return None
-
-    def set(self, value: list[Category]):
-        self.__list = value
-
-    def json(self) -> dict:
-        return self.__dict__
+        for index in range(self.size()):
+            category: Category | None = first_node.get_data()
+            if category is not None and category.get_name() == name:
+                return category
+            first_node = first_node.get_node()
