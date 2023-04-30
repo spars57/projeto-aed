@@ -2,31 +2,30 @@
 
 ## Métodos do Controller
 
-- Autenticação:
-
+Autenticação:
 
     login(username: str, password: str) -> bool
 
-- Criação de novas classes:
-
+Criação de Classes:
 
     create_user(username: str, password: str, nif: int) -> User
-    create_expense(user: User, category: Category, value: float, timestamp: int, description: str = ''')
+    create_expense(user: User, category: Category, value: float, timestamp: int, description: str = "") -> Expense
     create_category(name: str) -> Category
 
-- Adicionar às listas:
+Adicionar coisas às respectivas listas:
 
-      add_user(user: User) -> bool
-      add_category(category: Category) -> bool
-      add_expense(expense: Expense) -> bool
+    add_user(user: User) -> bool
+    add_category(category: Category) -> bool
+    add_expense(expense: Expense) -> bool
 
-- Filtragem de Despesas:
+Filtragem de Despesas:
 
-      Aviso: Todos os parametros desta função são opcionais 
-      e os filtros são acumulaveis permitindo assim filtragens complexas com multiplas condições
+    Aviso: 
+        Todos os parametros desta função são opcionais 
+        Os filtros são acumulaveis permitem filtragens com multiplas condições em simultanêo
 
 
-      get_expenses_filtered(
+    get_expenses_filtered(
                 user: User = None,
                 categories: list[Category] = None,
                 timestamp_minimum: int = None,
@@ -35,11 +34,11 @@
                 value_minimum: int = None,
                 value_maximum: int = None,
                 description: str = None
-        ) -> LinkedList | None
+    ) -> LinkedList | None
 
-- Outros:
+Outros:
 
-      validate_nif(nif: int) -> bool
+    validate_nif(nif: int) -> bool
 
 #### Notas:
 
