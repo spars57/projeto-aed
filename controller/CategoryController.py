@@ -10,12 +10,12 @@ class CategoryController:
     def create_category(name: str) -> Category:
         return Category(name=name)
 
-    def add_category(self, category: Category) -> bool:
+    def add_category(self, category: Category) -> str:
         category_list = self.__modal.get_category_list()
 
         if category_list.get_category_by_name(category.get_name()) is not None:
-            return False
+            return f"Já existe uma categoria registada com o nome '{category.get_name()}'"
 
         category_list.insert_first(category)
 
-        return True
+        return f"Categoria '{category.get_name()}' registada com sucesso"

@@ -20,15 +20,15 @@ class UserController:
     def create_user(username: str, password: str, nif: int) -> User:
         return User(username=username, password=encrypt(password), nif=nif)
 
-    def add_user(self, user: User) -> bool:
+    def add_user(self, user: User) -> str:
         user_list = self.__modal.get_user_list()
 
         if user_list.get_user_by_username(user.get_username()) is not None:
-            return False
+            return f"Já existe um utilizador registado com o username '{user.get_username()}'."
 
         if not validate_nif(user.get_nif()):
-            return False
+            return f"O nif '{user.get_nif()}' é inválido."
 
         user_list.insert_first(user)
 
-        return True
+        return f"Utilizador '{user.get_username()}' registado com sucesso"

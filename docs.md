@@ -11,12 +11,14 @@ Criação de Classes:
     create_user(username: str, password: str, nif: int) -> User
     create_expense(user: User, category: Category, value: float, timestamp: int, description: str = "") -> Expense
     create_category(name: str) -> Category
+    create_budget(name: str, user: User, category: Category, value: float, valid_from: float, valid_until: float) -> Budget
 
 Adicionar coisas às respectivas listas:
 
-    add_user(user: User) -> bool
-    add_category(category: Category) -> bool
-    add_expense(expense: Expense) -> bool
+    add_user(user: User) -> str
+    add_category(category: Category) -> str
+    add_expense(expense: Expense) -> str
+    add_budget(budget: Budget) -> str
 
 Filtragem de Despesas:
 
@@ -36,9 +38,17 @@ Filtragem de Despesas:
                 description: str = None
     ) -> LinkedList | None
 
+Gets:
+
+    get_budget_by_user(user: User) -> LinkedList | None
+    get_category_by_name(name: str) -> Category | None
+    get_user_by_username(username: str) -> User | None
+    get_user_by_id(user_id: uuid4) -> User | None
+
 Outros:
 
     validate_nif(nif: int) -> bool
+
 
 #### Notas:
 

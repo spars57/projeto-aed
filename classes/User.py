@@ -9,6 +9,7 @@ class User:
         self.__id: str = str(uuid4())
         self.__username: str = username
         self.__password: str = password
+        self.__balance: float = 0
         self.__nif: int = nif
 
     def get_id(self) -> str:
@@ -37,6 +38,13 @@ class User:
 
     def set_password(self, password: str) -> TUser:
         self.__password = password
+        return self
+
+    def get_balance(self) -> float:
+        return self.__balance
+
+    def set_balance(self, value: float) -> TUser:
+        self.__balance = value
         return self
 
     def json(self) -> dict:
