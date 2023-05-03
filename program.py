@@ -5,6 +5,7 @@ from classes.Category import Category
 from classes.Expense import Expense
 from controller.Controller import Controller
 from modal.Modal import Modal
+from view.View import Frame
 
 myController = Controller(Modal())
 
@@ -47,3 +48,7 @@ for i in range(nodes.size()):
     if current_node is not None:
         budget = current_node.get_data()
     current_node = current_node.get_node()
+
+if __name__ == "__main__":
+    app = Frame()
+    app.mainloop()
