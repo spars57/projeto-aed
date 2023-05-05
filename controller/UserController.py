@@ -10,11 +10,7 @@ class UserController:
 
     def login(self, username: str, password: str) -> bool:
         user = self.__modal.get_user_list().get_user_by_username(username)
-
-        if user is None:
-            return False
-
-        return user.get_password() == password
+        return user.get_password() is encrypt(password) if user is not None else False
 
     @staticmethod
     def create_user(username: str, password: str, nif: int) -> User:
@@ -29,6 +25,5 @@ class UserController:
         if not validate_nif(user.get_nif()):
             return f"O nif '{user.get_nif()}' é inválido."
 
-        user_list.insert_first(user)
-
-        return f"Utilizador '{user.get_username()}' registado com sucesso"
+        if user_list.insert_first(user):
+            return f"Utilizador '{user.get_username()}' registado com sucesso"

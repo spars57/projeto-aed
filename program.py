@@ -17,6 +17,9 @@ u2.set_balance(1000)
 print(myController.add_user(u1))
 print(myController.add_user(u2))
 
+print('Login Spars:', myController.login("spars", u1.get_password()))
+print('Login Spars:', myController.login("7777", ""))
+
 c1 = Category("Category 1")
 c2 = Category("Category 2")
 c3 = Category("Category 3")

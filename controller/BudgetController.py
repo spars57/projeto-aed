@@ -10,10 +10,22 @@ class BudgetController:
         self.get_budget_by_user = modal.get_budget_list().get_budget_by_user
 
     @staticmethod
-    def create_budget(name: str, user: User, category: Category, value: float, valid_from: float,
-                      valid_until: float) -> Budget:
-        return Budget(name=name, user=user, category=category, value=value, valid_from=valid_from,
-                      valid_until=valid_until)
+    def create_budget(
+            name: str,
+            user: User,
+            category: Category,
+            value: float,
+            valid_from: float,
+            valid_until: float
+    ) -> Budget:
+        return Budget(
+            name=name,
+            user=user,
+            category=category,
+            value=value,
+            valid_from=valid_from,
+            valid_until=valid_until
+        )
 
     def add_budget(self, budget: Budget) -> str:
         budget_list = self.__modal.get_budget_list()

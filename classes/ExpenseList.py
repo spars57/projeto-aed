@@ -4,7 +4,7 @@ from classes.LinkedList import LinkedList
 from classes.User import User
 
 
-class ExpenseList(LinkedList):
+class ExpenseList(LinkedList[Expense]):
     def __init__(self):
         LinkedList.__init__(self)
 
@@ -20,7 +20,7 @@ class ExpenseList(LinkedList):
             description: str = None
     ) -> LinkedList | None:
         expenses_list: list[Expense] = []
-        final_list: LinkedList = LinkedList()
+        final_list = LinkedList[Expense]()
         node = self.get_first()
 
         for index in range(self.size()):
