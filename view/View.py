@@ -18,39 +18,42 @@ class Frame(tk.Tk):
         
 class MainFrame(tk.Frame):
     def __init__(self, master):
-        tk.Frame.__init__(self, master)
+        tk.Frame.__init__(self, master, bg="#1DC1C6")
+        self.master.resizable(False, False)
         self.master.title('Iniciar Sessão')
-        self.master.geometry('400x125')
 
         mensagem = "Erro com o user ou pass"
 
-        self.welc = tk.Label(self, text="Bem vindo ao gestor de despesas").grid(row=0, column=1)
-        
-        self.user_label = tk.Label(self, text="Username:").grid(row=1, column=0)
-        self.user_entry = tk.Entry(self)
-        self.user_entry.get()
-        self.user_entry.grid(row=1, column=1)
+        self.welc = tk.Label(self, text="Bem vindo ao gestor de despesas", font=("Comic Sans MS", 14),bg="#1DC1C6")
+        self.welc.pack()
 
-        self.password_label = tk.Label(self, text="Password:").grid(row=2, column=0)
-        self.password_entry = tk.Entry(self, show="*")
-        self.password_entry.get()
-        self.password_entry.grid(row=2, column=1)
+        self.user_label = tk.Label(self, text="Username:",font=("Comic Sans MS", 14), bg="#1DC1C6")
+        self.user_label.pack()
+        self.user_entry = tk.Entry(self, font=(18))
+        self.user_entry.pack()
 
-        self.login_button = tk.Button(self, text="Iniciar Sessão", command=(lambda: master.switch_frame(SessionFrame) if (self.login==True) else showerror('Error', mensagem))).grid(row=3, column=1)
+        self.password_label = tk.Label(self, text="Password:", font=("Comic Sans MS", 14), bg="#1DC1C6")
+        self.password_label.pack()
+        self.password_entry = tk.Entry(self, show="*", font=(18))
+        self.password_entry.pack()
 
-        self.create_button = tk.Button(self, text="Criar Utilizador", command=lambda: self.master.switch_frame(RegisterFrame)).grid(row=4, column=1)
+        self.login_button = tk.Button(self, text="Iniciar Sessão", font=("Comic Sans MS", 12) ,bg="#00FFE8" , command=(lambda: master.switch_frame(SessionFrame) if (self.login) else showerror('Error', mensagem)))
+        self.login_button.pack()
 
-        self.exit = tk.Button(self, text="Sair", command=lambda: self.master.destroy()).grid(row=4, column=0)
+        self.create_button = tk.Button(self, text="Criar Utilizador", font=("Comic Sans MS", 12),bg="#00FFE8" , command=lambda: self.master.switch_frame(RegisterFrame))
+        self.create_button.pack()
 
-    def login(self, user, password):
-        if UserController.login(self.user, self.password) == True:
-            return True
+        self.exit = tk.Button(self, text="Sair", font=("Comic Sans MS", 10) ,bg="#00FFE8" , command=lambda: self.master.destroy())
+        self.exit.pack()
+
+    def login(self):
+        UserController.login(self.user_entry.get(), self.password_entry.get())
 
 class RegisterFrame(tk.Frame):
     def __init__(self,master):
         tk.Frame.__init__(self, master)
         self.master.title('Criar Utilizador')
-        self.master.geometry('350x135')
+        self.master.resizable(False, False)
 
         mensagem2 = 'Utilizador Registado com Sucesso'
         mensagem3 = 'Erro na criação do user'
@@ -85,7 +88,7 @@ class SessionFrame(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         self.master.title("Sessão")
-        self.master.geometry("300x100")
+        self.master.resizable(False, False)
 
         self.label = tk.Label(self, text="Bem Vindo").pack()
 
@@ -98,7 +101,7 @@ class CreateDFrame(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         self.master.title("Criar Despesa")
-        self.master.geometry("300x100")
+        self.master.resizable(False, False)
 
         self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).pack()
 
@@ -106,7 +109,7 @@ class VerDFrame(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         self.master.title("Ver Despesa")
-        self.master.geometry("300x100")
+        self.master.resizable(False, False)
 
         self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).pack()
     
