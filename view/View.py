@@ -1,4 +1,5 @@
 import tkinter as tk
+import re
 from tkinter.messagebox import*
 from controller.UserController import UserController
 
@@ -21,6 +22,7 @@ class MainFrame(tk.Frame):
         tk.Frame.__init__(self, master, bg="#1DC1C6")
         self.master.resizable(False, False)
         self.master.title('Iniciar Sessão')
+        
 
         mensagem = "Erro com o user ou pass"
 
@@ -37,7 +39,7 @@ class MainFrame(tk.Frame):
         self.password_entry = tk.Entry(self, show="*", font=(18))
         self.password_entry.pack()
 
-        self.login_button = tk.Button(self, text="Iniciar Sessão", font=("Comic Sans MS", 12) ,bg="#00FFE8" , command=(lambda: master.switch_frame(SessionFrame) if (self.login) else showerror('Error', mensagem)))
+        self.login_button = tk.Button(self, text="Iniciar Sessão", font=("Comic Sans MS", 12) ,bg="#00FFE8" , command=self.login)
         self.login_button.pack()
 
         self.create_button = tk.Button(self, text="Criar Utilizador", font=("Comic Sans MS", 12),bg="#00FFE8" , command=lambda: self.master.switch_frame(RegisterFrame))
@@ -47,42 +49,81 @@ class MainFrame(tk.Frame):
         self.exit.pack()
 
     def login(self):
-        UserController.login(self.user_entry.get(), self.password_entry.get())
+        user = self.user_entry.get()
+        password =  self.password_entry.get()
+        if user != '' and password != '':
+            if UserController.login(user,password):
+                self.master.switch_frame(SessionFrame)
+            else:
+                showerror('Error','User ou password incorretos')
+        else:
+            showerror('Error','Campos Vazios')
+
 
 class RegisterFrame(tk.Frame):
     def __init__(self,master):
         tk.Frame.__init__(self, master)
         self.master.title('Criar Utilizador')
         self.master.resizable(False, False)
+        self.verificar_numb = (self.register(self.verficar_nif))
+        self.verificar_espaco = (self.register(self.verficar_espac))
 
         mensagem2 = 'Utilizador Registado com Sucesso'
         mensagem3 = 'Erro na criação do user'
 
         self.create_user_label = tk.Label(self, text="Username:").grid(row=0, column=0)
-        self.create_user_entry = tk.Entry(self)
+        self.create_user_entry = tk.Entry(self,validate='all',validatecommand=(self.verificar_espaco, '%P'))
         self.create_user_entry.grid(row=0, column=1)
 
         self.create_nif_label = tk.Label(self, text="NIF:").grid(row=1, column=0)
-        self.create_nif_entry = tk.Entry(self)
+        self.create_nif_entry = tk.Entry(self, validate='all',validatecommand=(self.verificar_numb, '%P'))
         self.create_nif_entry.grid(row=1, column=1)
 
         self.create_password_label = tk.Label(self, text="Password:").grid(row=2, column=0)
-        self.create_password_entry = tk.Entry(self, show="*")
+        self.create_password_entry = tk.Entry(self, show="*",validate='all',validatecommand=(self.verificar_espaco, '%P'))
         self.create_password_entry.grid(row=2, column=1)
 
         self.rep_password_label = tk.Label(self, text="Repeat Password:").grid(row=3, column=0)
-        self.rep_password_entry = tk.Entry(self, show="*").grid(row=3, column=1)
+        self.rep_password_entry = tk.Entry(self, show="*",validate='all',validatecommand=(self.verificar_espaco, '%P'))
+        self.rep_password_entry.grid(row=3, column=1)
 
-        self.register_button = tk.Button(self, text="Registrar Utilizador", command=(lambda: showerror('Sucesso', mensagem2) and master.switch_frame(MainFrame)
-                            if (self.registar(self.creauser.get(), self.creapassword.get(), self.creanif.get())==True) else showerror('Erro', mensagem3)))
+        self.register_button = tk.Button(self, text="Registar Utilizador", command=lambda: self.registar())
         self.register_button.grid(row=4, column=1)
 
         self.voltar_button = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(MainFrame)).grid(row=4, column=0)
 
-    def registar(self, user, password, nif):
-        if UserController.create_user(user, password, nif):
+    def registar(self): 
+        user = self.create_user_entry.get()
+        password =self.create_password_entry.get()
+        nif = self.create_nif_entry.get()
+        repeat_pass = self.rep_password_entry.get()
+
+        if user != '' and password != '' and nif != '':
+            if password == repeat_pass:
+                if UserController.create_user(user, password, nif):
+                    showinfo('Sucesso', 'Utilizador Registado com Sucesso')
+                    self.master.switch_frame(MainFrame)
+                else:
+                    showerror('Erro', 'Erro na criação do user')
+            else:
+                showerror('Error','Password e repetir password são diferentes')
+        else:
+            showerror('Error','Um dos campos que preencheu está vazio')
+
+# Limitar o que o User pode escrever
+    def verficar_nif(self, digito):
+        if str.isdigit(digito) or digito == "":
             return True
-        return False
+        else:
+            return False
+        
+    def verficar_espac(self, P):
+        if re.search(r"^\w*$",P):   #O re é o RegEx basicamente o que faz é ver se a string contém X padrão 
+                                    #O \W é equivalente a [^a-zA-Z0-9] o *$ basicamente é para que corra na string toda inves de so no 1º char
+            return True
+        else:
+            return False
+        
 
 class SessionFrame(tk.Frame):
     def __init__(self, master):
