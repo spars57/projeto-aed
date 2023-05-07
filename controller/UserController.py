@@ -16,9 +16,8 @@ class UserController:
 
         return user.get_password() == password
 
-    @staticmethod
-    def create_user(username: str, password: str, nif: int) -> User:
-        return User(username=username, password=encrypt(password), nif=nif)
+    def create_user(self, username: str, password: str, nif: int) -> str:
+        return self.add_user(User(username=username, password=encrypt(password), nif=nif))
 
     def add_user(self, user: User) -> str:
         user_list = self.__modal.get_user_list()
@@ -29,6 +28,5 @@ class UserController:
         if not validate_nif(user.get_nif()):
             return f"O nif '{user.get_nif()}' é inválido."
 
-        user_list.insert_first(user)
-
-        return f"Utilizador '{user.get_username()}' registado com sucesso"
+        if user_list.insert_first(user):
+            return f"Utilizador '{user.get_username()}' registado com sucesso"
