@@ -1,6 +1,7 @@
 import tkinter as tk
 import re
 from tkinter.messagebox import*
+from modal.Modal import Modal
 from controller.UserController import UserController
 
 class Frame(tk.Tk):
@@ -22,7 +23,7 @@ class MainFrame(tk.Frame):
         tk.Frame.__init__(self, master, bg="#1DC1C6")
         self.master.resizable(False, False)
         self.master.title('Iniciar Sessão')
-        
+        self.user_controller = UserController(Modal())
 
         mensagem = "Erro com o user ou pass"
 
@@ -51,11 +52,12 @@ class MainFrame(tk.Frame):
     def login(self):
         user = self.user_entry.get()
         password =  self.password_entry.get()
+        showinfo('Info',user + ' +' + password)
         if user != '' and password != '':
-            if UserController.login(user,password):
+            if self.user_controller.login(user,password):
                 self.master.switch_frame(SessionFrame)
             else:
-                showerror('Error','User ou password incorretos')
+                showerror('Error','Erro')
         else:
             showerror('Error','Campos Vazios')
 
@@ -67,6 +69,7 @@ class RegisterFrame(tk.Frame):
         self.master.resizable(False, False)
         self.verificar_numb = (self.register(self.verficar_nif))
         self.verificar_espaco = (self.register(self.verficar_espac))
+        self.user_controller = UserController(Modal())
 
         mensagem2 = 'Utilizador Registado com Sucesso'
         mensagem3 = 'Erro na criação do user'
@@ -100,11 +103,12 @@ class RegisterFrame(tk.Frame):
 
         if user != '' and password != '' and nif != '':
             if password == repeat_pass:
-                if UserController.create_user(user, password, nif):
+                showinfo('Info', user + '«' + password + '«' + nif)
+                if self.user_controller.create_user(user, password, nif):
                     showinfo('Sucesso', 'Utilizador Registado com Sucesso')
                     self.master.switch_frame(MainFrame)
                 else:
-                    showerror('Erro', 'Erro na criação do user')
+                    showerror('Erro',  'Erro')
             else:
                 showerror('Error','Password e repetir password são diferentes')
         else:
