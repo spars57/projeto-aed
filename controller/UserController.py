@@ -14,7 +14,7 @@ class UserController:
         if user is None:
             return False
 
-        return user.get_password() == password
+        return user.get_password() == encrypt(password)
 
     def create_user(self, username: str, password: str, nif: int) -> str:
         return self.add_user(User(username=username, password=encrypt(password), nif=nif))
@@ -28,5 +28,4 @@ class UserController:
         if not validate_nif(user.get_nif()):
             return f"O nif '{user.get_nif()}' é inválido."
 
-        if user_list.insert_first(user):
-            return f"Utilizador '{user.get_username()}' registado com sucesso"
+        user_list.insert_first(user)
