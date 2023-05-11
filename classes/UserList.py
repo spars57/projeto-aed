@@ -31,7 +31,7 @@ class UserList(LinkedList[User]):
         for index in range(self.size()):
             user: User | None = first_node.get_data()
 
-            if user is not None and user.get_username() == username:
+            if user.get_username() == username:
                 return user
 
             first_node = first_node.get_node()

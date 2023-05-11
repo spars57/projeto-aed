@@ -10,7 +10,7 @@ class UserController:
 
     def login(self, username: str, password: str) -> bool:
         user = self.__modal.get_user_list().get_user_by_username(username)
-        return user.get_password() is encrypt(password) if user is not None else False
+        return user.get_password() == encrypt(password)
 
     def create_user(self, username: str, password: str, nif: int) -> str:
         return self.__add_user(User(username=username, password=encrypt(password), nif=nif))

@@ -37,4 +37,5 @@ class LinkedList(Generic[T]):
         if first_node is not None:
             new_node.set_node(first_node)
 
+        self.__size += 1
         self.__head = new_node

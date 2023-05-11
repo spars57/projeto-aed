@@ -30,13 +30,15 @@ class MainFrame(tk.Frame):
         self.master.title('Iniciar Sessão')
         self.user_controller = Controller(modal)
         self.user_controller.create_user("a", "1", 229156347)
+        self.user_controller.create_user("b", "2", 229156347)
 
-        self.welc = tk.Label(self, text="Bem Vindo ao Gestor de Despesas", font=("Comic Sans MS", 14), bg="#17223b", fg="#ffa200")
+        self.welc = tk.Label(self, text="Bem Vindo ao Gestor de Despesas", font=("Comic Sans MS", 14), bg="#17223b",
+                             fg="#ffa200")
         self.welc.grid(row=0, column=1)
 
-        self.logo = tk.PhotoImage(file= "Logo.png")
+        self.logo = tk.PhotoImage(file="Logo.png")
         self.logo = self.logo.subsample(4)
-        self.logo_label = tk.Label(self, image=self.logo, bg = "#17223b")
+        self.logo_label = tk.Label(self, image=self.logo, bg="#17223b")
         self.logo_label.grid(rowspan=1, column=1)
 
         self.user_label = tk.Label(self, text="Username:", font=("Comic Sans MS", 14), bg="#17223b", fg="#ffa200")
@@ -49,11 +51,13 @@ class MainFrame(tk.Frame):
         self.password_entry = tk.Entry(self, show="*", font=(18), bg="#6b778d", fg="#17223b")
         self.password_entry.grid(row=3, column=1)
 
-        self.login_button = tk.Button(self, text="Iniciar Sessão", font=("Comic Sans MS", 12), bg="#6b778d", fg="#17223b",
+        self.login_button = tk.Button(self, text="Iniciar Sessão", font=("Comic Sans MS", 12), bg="#6b778d",
+                                      fg="#17223b",
                                       command=self.login)
         self.login_button.grid(row=4, column=1)
 
-        self.create_button = tk.Button(self, text="Criar Utilizador", font=("Comic Sans MS", 12), bg="#6b778d", fg="#17223b",
+        self.create_button = tk.Button(self, text="Criar Utilizador", font=("Comic Sans MS", 12), bg="#6b778d",
+                                       fg="#17223b",
                                        command=lambda: self.master.switch_frame(RegisterFrame))
         self.create_button.grid(row=5, column=1)
 
@@ -178,7 +182,7 @@ class CreateDFrame(tk.Frame):
         self.valor_label = tk.Label(self, text="Valor:").pack()
         self.valor_entry = tk.Entry(self).pack()
 
-        self.data_label = tk.Label(self, text= "Data:").pack()
+        self.data_label = tk.Label(self, text="Data:").pack()
 
         self.descricao_label = tk.Label(self, text="Descrição:").pack()
         self.descricao = tk.Text(self).pack()
