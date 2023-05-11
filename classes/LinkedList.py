@@ -9,7 +9,6 @@ class LinkedList(Generic[T]):
     def __init__(self):
         self.__head: Node[T] = None
         self.__size: int = 0
-        self.__list: list[Node[T]] = []
 
     def is_empty(self) -> bool:
         return self.__size == 0
