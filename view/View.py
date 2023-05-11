@@ -1,5 +1,6 @@
 import re
 import tkinter as tk
+from tkinter import ttk
 from tkinter.messagebox import *
 
 from controller.Controller import Controller
@@ -24,37 +25,41 @@ class Frame(tk.Tk):
 
 class MainFrame(tk.Frame):
     def __init__(self, master):
-        tk.Frame.__init__(self, master, bg="#1DC1C6")
+        tk.Frame.__init__(self, master, bg="#17223b")
         self.master.resizable(False, False)
         self.master.title('Iniciar Sessão')
         self.user_controller = Controller(modal)
+        self.user_controller.create_user("a", "1", 229156347)
 
-        mensagem = "Erro com o user ou pass"
+        self.welc = tk.Label(self, text="Bem Vindo ao Gestor de Despesas", font=("Comic Sans MS", 14), bg="#17223b", fg="#ffa200")
+        self.welc.grid(row=0, column=1)
 
-        self.welc = tk.Label(self, text="Bem vindo ao gestor de despesas", font=("Comic Sans MS", 14), bg="#1DC1C6")
-        self.welc.pack()
+        self.logo = tk.PhotoImage(file= "Logo.png")
+        self.logo = self.logo.subsample(4)
+        self.logo_label = tk.Label(self, image=self.logo, bg = "#17223b")
+        self.logo_label.grid(rowspan=1, column=1)
 
-        self.user_label = tk.Label(self, text="Username:", font=("Comic Sans MS", 14), bg="#1DC1C6")
-        self.user_label.pack()
-        self.user_entry = tk.Entry(self, font=(18))
-        self.user_entry.pack()
+        self.user_label = tk.Label(self, text="Username:", font=("Comic Sans MS", 14), bg="#17223b", fg="#ffa200")
+        self.user_label.grid(row=2, column=0)
+        self.user_entry = tk.Entry(self, font=(18), bg="#6b778d", fg="#17223b")
+        self.user_entry.grid(row=2, column=1)
 
-        self.password_label = tk.Label(self, text="Password:", font=("Comic Sans MS", 14), bg="#1DC1C6")
-        self.password_label.pack()
-        self.password_entry = tk.Entry(self, show="*", font=(18))
-        self.password_entry.pack()
+        self.password_label = tk.Label(self, text="Password:", font=("Comic Sans MS", 14), bg="#17223b", fg="#ffa200")
+        self.password_label.grid(row=3, column=0)
+        self.password_entry = tk.Entry(self, show="*", font=(18), bg="#6b778d", fg="#17223b")
+        self.password_entry.grid(row=3, column=1)
 
-        self.login_button = tk.Button(self, text="Iniciar Sessão", font=("Comic Sans MS", 12), bg="#00FFE8",
+        self.login_button = tk.Button(self, text="Iniciar Sessão", font=("Comic Sans MS", 12), bg="#6b778d", fg="#17223b",
                                       command=self.login)
-        self.login_button.pack()
+        self.login_button.grid(row=4, column=1)
 
-        self.create_button = tk.Button(self, text="Criar Utilizador", font=("Comic Sans MS", 12), bg="#00FFE8",
+        self.create_button = tk.Button(self, text="Criar Utilizador", font=("Comic Sans MS", 12), bg="#6b778d", fg="#17223b",
                                        command=lambda: self.master.switch_frame(RegisterFrame))
-        self.create_button.pack()
+        self.create_button.grid(row=5, column=1)
 
-        self.exit = tk.Button(self, text="Sair", font=("Comic Sans MS", 10), bg="#00FFE8",
+        self.exit = tk.Button(self, text="Sair", font=("Comic Sans MS", 10), bg="#6b778d", fg="#17223b",
                               command=lambda: self.master.destroy())
-        self.exit.pack()
+        self.exit.grid(row=5, column=0)
 
     def login(self):
         user = self.user_entry.get()
@@ -68,7 +73,7 @@ class MainFrame(tk.Frame):
         print('response:', response)
 
         if response:
-            showerror('Sucesso', 'Login Efetuado')
+            showinfo('Sucesso', 'Login Efetuado')
             self.master.switch_frame(SessionFrame)
         else:
             showerror('Error', 'Login Falhou')
@@ -82,9 +87,6 @@ class RegisterFrame(tk.Frame):
         self.verificar_numb = (self.register(self.verficar_nif))
         self.verificar_espaco = (self.register(self.verficar_espac))
         self.user_controller = Controller(modal)
-
-        mensagem2 = 'Utilizador Registado com Sucesso'
-        mensagem3 = 'Erro na criação do user'
 
         self.create_user_label = tk.Label(self, text="Username:").grid(row=0, column=0)
         self.create_user_entry = tk.Entry(self, validate='all', validatecommand=(self.verificar_espaco, '%P'))
@@ -169,6 +171,19 @@ class CreateDFrame(tk.Frame):
         tk.Frame.__init__(self, master)
         self.master.title("Criar Despesa")
         self.master.resizable(False, False)
+
+        self.categoria_label = tk.Label(self, text="Categoria:").pack()
+        self.categoria_entry = ttk.Combobox(self).pack()
+
+        self.valor_label = tk.Label(self, text="Valor:").pack()
+        self.valor_entry = tk.Entry(self).pack()
+
+        self.data_label = tk.Label(self, text= "Data:").pack()
+
+        self.descricao_label = tk.Label(self, text="Descrição:").pack()
+        self.descricao = tk.Text(self).pack()
+
+        self.registar = tk.Button(self, text="Registar Despesa").pack()
 
         self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).pack()
 
