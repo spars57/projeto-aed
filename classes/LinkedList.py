@@ -1,43 +1,41 @@
+from typing import TypeVar, Generic
+
 from classes.Node import Node
 
+T = TypeVar('T')
 
-class LinkedList:
+
+class LinkedList(Generic[T]):
     def __init__(self):
-        self.__list: list[Node] = []
+        self.__head: Node[T] = None
+        self.__size: int = 0
+        self.__list: list[Node[T]] = []
 
     def is_empty(self) -> bool:
-        return len(self.__list) == 0
+        return self.__size == 0
 
     def size(self) -> int:
-        return len(self.__list)
+        return self.__size
 
-    def get_first(self) -> Node | None:
-        try:
-            return self.__list[0]
-        except IndexError:
+    def get_first(self) -> Node[T] | None:
+        return self.__head
+
+    def get_last(self) -> T | None:
+        if self.__head is None:
             return None
 
-    def get_last(self) -> any:
-        try:
-            return self.__list[len(self.__list) - 1]
-        except IndexError:
-            return None
+        node = self.__head.get_node()
 
-    def get(self, index) -> any:
-        try:
-            [self.__list[i] for i in range(len(self.__list)) if i == index][0]
-        except IndexError:
-            return None
+        while node.get_node() is not None:
+            node = node.get_node()
 
-    def insert_first(self, data: any) -> None:
-        first_node: Node = self.get_first()
+        return node
+
+    def insert_first(self, data: T) -> None:
+        first_node = self.get_first()
         new_node = Node(data)
 
         if first_node is not None:
             new_node.set_node(first_node)
 
-        self.__list.insert(0, new_node)
-
-    def remove_first(self) -> None:
-        first_node = self.get_first()
-        self.__list = [node for node in self.__list if node.get_id() != first_node.get_id()]
+        self.__head = new_node
