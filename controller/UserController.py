@@ -12,11 +12,10 @@ class UserController:
         user = self.__modal.get_user_list().get_user_by_username(username)
         return user.get_password() is encrypt(password) if user is not None else False
 
-    @staticmethod
-    def create_user(username: str, password: str, nif: int) -> User:
-        return User(username=username, password=encrypt(password), nif=nif)
+    def create_user(self, username: str, password: str, nif: int) -> str:
+        return self.__add_user(User(username=username, password=encrypt(password), nif=nif))
 
-    def add_user(self, user: User) -> str:
+    def __add_user(self, user: User) -> str:
         user_list = self.__modal.get_user_list()
 
         if user_list.get_user_by_username(user.get_username()) is not None:
