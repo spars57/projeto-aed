@@ -1,13 +1,14 @@
 import re
 import tkinter as tk
 from tkinter import ttk
+from tkcalendar import Calendar
 from tkinter.messagebox import *
 
 from controller.Controller import Controller
 from modal.Modal import Modal
 
 modal = Modal()
-
+global nome_user
 
 class Frame(tk.Tk):
     def __init__(self):
@@ -79,6 +80,8 @@ class MainFrame(tk.Frame):
         if response:
             showinfo('Sucesso', 'Login Efetuado')
             self.master.switch_frame(SessionFrame)
+            global nome_user 
+            nome_user = user
         else:
             showerror('Error', 'Login Falhou')
 
@@ -173,23 +176,58 @@ class SessionFrame(tk.Frame):
 class CreateDFrame(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
+        self.user_controller = Controller(modal)
         self.master.title("Criar Despesa")
         self.master.resizable(False, False)
+        self.selected_date = None
 
-        self.categoria_label = tk.Label(self, text="Categoria:").pack()
-        self.categoria_entry = ttk.Combobox(self).pack()
+        self.categoria_label = tk.Label(self, text="Categoria:")
+        self.categoria_label.pack()
 
-        self.valor_label = tk.Label(self, text="Valor:").pack()
-        self.valor_entry = tk.Entry(self).pack()
+        self.categoria_entry = ttk.Combobox(self, values=['Casa', 'Passe', 'Alimentação', 'Casa', 'Roupa', 'Outros'], state='readonly')
+        self.categoria_entry.pack()
 
-        self.data_label = tk.Label(self, text="Data:").pack()
+        self.valor_label = tk.Label(self, text="Valor:")
+        self.valor_label.pack()
 
-        self.descricao_label = tk.Label(self, text="Descrição:").pack()
-        self.descricao = tk.Text(self).pack()
+        self.valor_entry = tk.Entry(self)
+        self.valor_entry.pack()
 
-        self.registar = tk.Button(self, text="Registar Despesa").pack()
+        self.data_label = tk.Label(self, text="Data:")
+        self.data_label.pack()
 
-        self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).pack()
+        self.calendar = Calendar(self, selectmode='day', date_pattern='yyyy-mm-dd')
+        self.calendar.pack()
+
+        self.descricao_label = tk.Label(self, text="Descrição:")
+        self.descricao_label.pack()
+
+        self.descricao_entry = tk.Text(self, width=50, height=10)
+        self.descricao_entry.pack()
+
+        self.registar = tk.Button(self, text="Registar Despesa", command=self.criar_despesa)
+        self.registar.pack()
+
+        self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame))
+        self.retroceder.pack()
+
+
+
+    def criar_despesa(self):
+        categoria = self.categoria_entry.get()
+        valor = self.valor_entry.get()
+        data = self.calendar.get_date()
+        descricao = self.descricao_entry.get("1.0", "end").strip()
+        global nome_user
+        user = nome_user
+        print(user + ' '+ categoria, valor, data, descricao)
+
+        retorno = self.user_controller.create_expense(user, categoria, valor, data, descricao)
+
+        if retorno.startswith("Operação"):
+            showinfo('Sucesso', 'Despesa Criada')
+        else:
+            showerror('Error', 'Falhou a inserir')
 
 
 class VerDFrame(tk.Frame):
