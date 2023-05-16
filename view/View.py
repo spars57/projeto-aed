@@ -181,7 +181,7 @@ class CreateDFrame(tk.Frame):
         self.master.resizable(False, False)
         self.selected_date = None
 
-        self.categoria_label = tk.Label(self, text="Categoria:")
+        self.categoria_label = tk.Label(self, text="Categoria*:")
         self.categoria_label.grid(row=0, column=0)
         self.categoria_combo = ttk.Combobox(self, values=['Casa', 'Passe', 'Alimentação', 'Roupa', 'Outros'], state='readonly')
         self.categoria_combo.grid(row=0, column=1)
@@ -191,7 +191,7 @@ class CreateDFrame(tk.Frame):
         self.valor_entry = tk.Entry(self)
         self.valor_entry.grid(row=1, column=1)
 
-        self.data_label = tk.Label(self, text="Data:")
+        self.data_label = tk.Label(self, text="Data*:")
         self.data_label.grid(row=2, column=0)
         self.calendar = Calendar(self, selectmode='day', date_pattern='yyyy-mm-dd')
         self.calendar.grid(row=2, column=1)
