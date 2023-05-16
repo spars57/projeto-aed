@@ -184,7 +184,7 @@ class CreateDFrame(tk.Frame):
         self.categoria_label = tk.Label(self, text="Categoria:")
         self.categoria_label.pack()
 
-        self.categoria_entry = ttk.Combobox(self, values=['Casa', 'Passe', 'Alimentação', 'Casa', 'Roupa', 'Outros'], state='readonly')
+        self.categoria_entry = ttk.Combobox(self, values=['Casa', 'Passe', 'Alimentação', 'Roupa', 'Outros'], state='readonly')
         self.categoria_entry.pack()
 
         self.valor_label = tk.Label(self, text="Valor:")
