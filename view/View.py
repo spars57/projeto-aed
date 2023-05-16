@@ -182,39 +182,35 @@ class CreateDFrame(tk.Frame):
         self.selected_date = None
 
         self.categoria_label = tk.Label(self, text="Categoria:")
-        self.categoria_label.pack()
+        self.categoria_label.grid(row=0, column=0)
+        self.categoria_combo = ttk.Combobox(self, values=['Casa', 'Passe', 'Alimentação', 'Roupa', 'Outros'], state='readonly')
+        self.categoria_combo.grid(row=0, column=1)
 
-        self.categoria_entry = ttk.Combobox(self, values=['Casa', 'Passe', 'Alimentação', 'Roupa', 'Outros'], state='readonly')
-        self.categoria_entry.pack()
-
-        self.valor_label = tk.Label(self, text="Valor:")
-        self.valor_label.pack()
-
+        self.valor_label = tk.Label(self, text="Valor*:")
+        self.valor_label.grid(row=1, column=0)
         self.valor_entry = tk.Entry(self)
-        self.valor_entry.pack()
+        self.valor_entry.grid(row=1, column=1)
 
         self.data_label = tk.Label(self, text="Data:")
-        self.data_label.pack()
-
+        self.data_label.grid(row=2, column=0)
         self.calendar = Calendar(self, selectmode='day', date_pattern='yyyy-mm-dd')
-        self.calendar.pack()
+        self.calendar.grid(row=2, column=1)
 
         self.descricao_label = tk.Label(self, text="Descrição:")
-        self.descricao_label.pack()
-
+        self.descricao_label.grid(row=3, column=0)
         self.descricao_entry = tk.Text(self, width=50, height=10)
-        self.descricao_entry.pack()
+        self.descricao_entry.grid(row=3, column=1)
 
         self.registar = tk.Button(self, text="Registar Despesa", command=self.criar_despesa)
-        self.registar.pack()
+        self.registar.grid(row=4, column=1)
 
         self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame))
-        self.retroceder.pack()
+        self.retroceder.grid(row=4, column=0)
 
 
 
     def criar_despesa(self):
-        categoria = self.categoria_entry.get()
+        categoria = self.categoria_combo.get()
         valor = self.valor_entry.get()
         data = self.calendar.get_date()
         descricao = self.descricao_entry.get("1.0", "end").strip()
