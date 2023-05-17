@@ -218,7 +218,7 @@ class CreateDFrame(tk.Frame):
         user = nome_user
         print(user + ' '+ categoria, valor, data, descricao)
 
-        retorno = self.user_controller.create_expense(user, categoria, valor, data, descricao)
+        retorno = self.user_controller.create_expense(categoria, valor, data, descricao)
 
         if retorno.startswith("Operação"):
             showinfo('Sucesso', 'Despesa Criada')

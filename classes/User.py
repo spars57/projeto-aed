@@ -9,7 +9,7 @@ class User:
         self.__id: str = str(uuid4())
         self.__username: str = username
         self.__password: str = password
-        self.__balance: float = 0
+        self.__balance: float = 50
         self.__nif: int = nif
 
     def get_id(self) -> str:

@@ -31,12 +31,13 @@ class ExpenseController:
 
         if user_list.get_user_by_username(expense.get_user().get_username()) is None:
             return f"Utilizador '{expense.get_user().get_username()}' não registado"
-
+        
         if category_list.get_category_by_name(expense.get_category().get_name()) is None:
             return f"Categoria '{expense.get_category().get_name()}' não registada"
 
-        if expense.get_value() > expense.get_user().get_balance():
+        if float(expense.get_value()) > expense.get_user().get_balance():
             return f"Saldo insuficiente, o seu saldo é {expense.get_user().get_balance()}€ e a operação que tentou efetuar é de {expense.get_value()}€"
+
 
         if budget_list is not None:
             # filter budgets associated with current expense category and matching current time stamp
@@ -56,7 +57,7 @@ class ExpenseController:
                     return f"O orçamento {bugdet.get_name()} foi ultrapassado"
                 bugdet.set_value(0 if final_value < 0 else final_value)
 
-        expense.get_user().set_balance(expense.get_user().get_balance() - expense.get_value())
+        expense.get_user().set_balance(expense.get_user().get_balance() - float(expense.get_value()))
         expense_list.insert_first(expense)
 
         return f"Operação '{expense.get_description()}' registada com sucesso"
