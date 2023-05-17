@@ -2,7 +2,6 @@ from classes.Budget import Budget
 from classes.Category import Category
 from classes.Expense import Expense
 from classes.Node import Node
-from classes.User import User
 from modal.Modal import Modal
 
 
@@ -12,10 +11,17 @@ class ExpenseController:
         # Proxify ExpenseList Methods
         self.get_expenses_filtered = modal.get_expense_list().get_expenses_filtered
 
-    def create_expense(self, user: User, category: Category, value: float, timestamp: int,
+    def create_expense(self, category: Category, value: float, timestamp: int,
                        description: str = "") -> str:
+
         return self.__add_expense(
-            Expense(user=user, category=category, description=description, value=value, timestamp=timestamp))
+            Expense(
+                user=self.__modal.get_current_user(),
+                category=category,
+                description=description,
+                value=value,
+                timestamp=timestamp
+            ))
 
     def __add_expense(self, expense: Expense) -> str:
         expense_list = self.__modal.get_expense_list()

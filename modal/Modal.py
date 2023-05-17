@@ -1,6 +1,7 @@
 from classes.BudgetList import BudgetList
 from classes.CategoryList import CategoryList
 from classes.ExpenseList import ExpenseList
+from classes.User import User
 from classes.UserList import UserList
 
 
@@ -10,6 +11,7 @@ class Modal:
         self.__category_list: CategoryList = CategoryList()
         self.__expense_list: ExpenseList = ExpenseList()
         self.__budget_list: BudgetList = BudgetList()
+        self.__current_user: User = None
 
     def get_user_list(self) -> UserList:
         return self.__user_list
@@ -22,3 +24,9 @@ class Modal:
 
     def get_budget_list(self) -> BudgetList:
         return self.__budget_list
+
+    def set_current_user(self, user: User) -> None:
+        self.__current_user = user
+
+    def get_current_user(self) -> User:
+        return self.__current_user
