@@ -9,6 +9,18 @@ class CategoryController:
     def create_category(self, name: str) -> str:
         return self.__add_category(Category(name=name))
 
+    def get_all_category_names(self) -> list[str] | str:
+        node = self.__modal.get_category_list().get_first()
+        if node is None:
+            return 'No options available'
+        names: list[str] = []
+
+        while node is not None:
+            names.append(node.get_data().get_name())
+            node = node.get_node()
+
+        return names
+
     def __add_category(self, category: Category) -> str:
         category_list = self.__modal.get_category_list()
 
