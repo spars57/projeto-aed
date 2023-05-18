@@ -11,7 +11,7 @@ class ExpenseController:
         # Proxify ExpenseList Methods
         self.get_expenses_filtered = modal.get_expense_list().get_expenses_filtered
 
-    def create_expense(self, category: Category, value: float, timestamp: int,
+    def create_expense(self, category: Category, value: float, timestamp: float | int,
                        description: str = "") -> str:
 
         return self.__add_expense(
@@ -31,13 +31,12 @@ class ExpenseController:
 
         if user_list.get_user_by_username(expense.get_user().get_username()) is None:
             return f"Utilizador '{expense.get_user().get_username()}' não registado"
-        
-        # if category_list.get_category_by_name(expense.get_category().get_name()) is None:
-        #     return f"Categoria '{expense.get_category().get_name()}' não registada"
+
+        if category_list.get_category_by_name(expense.get_category().get_name()) is None:
+            return f"Categoria '{expense.get_category().get_name()}' não registada"
 
         if float(expense.get_value()) > expense.get_user().get_balance():
             return f"Saldo insuficiente, o seu saldo é {expense.get_user().get_balance()}€ e a operação que tentou efetuar é de {expense.get_value()}€"
-
 
         if budget_list is not None:
             # filter budgets associated with current expense category and matching current time stamp
@@ -61,5 +60,3 @@ class ExpenseController:
         expense_list.insert_first(expense)
 
         return f"Operação '{expense.get_description()}' registada com sucesso"
-
-  

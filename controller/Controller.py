@@ -20,3 +20,8 @@ class Controller(
 
     def get_modal(self) -> Modal:
         return self.__modal
+
+
+c = Controller(Modal())
+
+c.get_expenses_filtered()

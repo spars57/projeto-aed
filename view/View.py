@@ -1,14 +1,19 @@
+import calendar
 import re
 import tkinter as tk
+from datetime import datetime
 from tkinter import ttk
-from tkcalendar import Calendar
 from tkinter.messagebox import *
 
+from tkcalendar import Calendar
+
+from classes.Expense import Expense
 from controller.Controller import Controller
 from modal.Modal import Modal
 
 modal = Modal()
 global nome_user
+
 
 class Frame(tk.Tk):
     def __init__(self):
@@ -32,6 +37,7 @@ class MainFrame(tk.Frame):
         self.user_controller = Controller(modal)
         self.user_controller.create_user("a", "1", 229156347)
         self.user_controller.create_user("b", "2", 229156347)
+        self.user_controller.get_modal().get_user_list().get_user_by_username("a").set_balance(5000)
 
         self.welc = tk.Label(self, text="Bem Vindo ao Gestor de Despesas", font=("Comic Sans MS", 14), bg="#17223b",
                              fg="#ffa200")
@@ -75,12 +81,10 @@ class MainFrame(tk.Frame):
             return
 
         response = self.user_controller.login(user, password)
-        print('response:', response)
 
         if response:
-            showinfo('Sucesso', 'Login Efetuado')
             self.master.switch_frame(SessionFrame)
-            global nome_user 
+            global nome_user
             nome_user = user
         else:
             showerror('Error', 'Login Falhou')
@@ -181,9 +185,13 @@ class CreateDFrame(tk.Frame):
         self.master.resizable(False, False)
         self.selected_date = None
 
+        for item in ['Casa', 'Passe', 'Alimentação', 'Roupa', 'Outros']:
+            self.user_controller.create_category(item)
+
         self.categoria_label = tk.Label(self, text="Categoria*:")
         self.categoria_label.grid(row=0, column=0)
-        self.categoria_combo = ttk.Combobox(self, values=['Casa', 'Passe', 'Alimentação', 'Roupa', 'Outros'], state='readonly')
+        self.categoria_combo = ttk.Combobox(self, values=self.user_controller.get_all_category_names(),
+                                            state='readonly')
         self.categoria_combo.grid(row=0, column=1)
 
         self.valor_label = tk.Label(self, text="Valor*:")
@@ -207,46 +215,66 @@ class CreateDFrame(tk.Frame):
         self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame))
         self.retroceder.grid(row=4, column=0)
 
-
-
     def criar_despesa(self):
         categoria = self.categoria_combo.get()
         valor = self.valor_entry.get()
         data = self.calendar.get_date()
+
+        data = data.split("-")
+
+        data = datetime(int(data[0]), int(data[1]), int(data[2]))
+        data = calendar.timegm(data.timetuple())
+
         descricao = self.descricao_entry.get("1.0", "end").strip()
         global nome_user
         user = nome_user
-        print(user + ' '+ categoria, valor, data, descricao)
 
-        retorno = self.user_controller.create_expense(categoria, valor, data, descricao)
+        categoria = self.user_controller.get_modal().get_category_list().get_category_by_name(categoria)
+        valor = float(valor)
+
+        retorno = self.user_controller.create_expense(categoria, valor, int(data), descricao)
 
         if retorno.startswith("Operação"):
             showinfo('Sucesso', 'Despesa Criada')
         else:
-            showerror('Error', 'Falhou a inserir')
+            showerror('Error', retorno)
 
 
 class VerDFrame(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        self.user_controller = Controller(modal)
         self.master.title("Ver Despesa")
         self.master.resizable(False, False)
-        colunas_lista = ("Categoria", "Valor", "Data", "Descrição")
-        
+        self.controller = Controller(modal)
 
-        self.lista_despesas = ttk.Treeview(self,columns=colunas_lista)
-        self.lista_despesas.heading("Categoria", text="Categoria")
-        self.lista_despesas.heading("Valor", text="Valor")
-        self.lista_despesas.heading("Data", text="Data")
-        self.lista_despesas.heading("Descrição", text="Descrição")
-        self.lista_despesas.pack()
-        self.update_lista()
+        expenses = self.controller.get_expenses_filtered(user=modal.get_current_user())
 
-        self.atualizar_lista = tk.Button (self, text="Atualizar", command=lambda: self.update_lista())
-        self.atualizar_lista.pack()
+        if expenses is None:
+            showerror('Error', 'Sem despesas para mostrar')
+        else:
+            rows = []
+
+            node = expenses.get_first()
+
+            while node is not None:
+                data: Expense = node.get_data()
+
+                rows.append(
+                    [data.get_category().get_name(), data.get_description(), f"{str(data.get_value())}€",
+                     str(datetime.fromtimestamp(data.get_timestamp()))])
+                node = node.get_node()
+
+            self.tabela = ttk.Treeview(self, columns=["category", "description", "value", "timestamp"],
+                                       show='headings')
+
+            self.tabela.heading("category", text="Category")
+            self.tabela.heading("description", text="Description")
+            self.tabela.heading("value", text="Value")
+            self.tabela.heading("timestamp", text="Date")
+
+            for row in rows:
+                self.tabela.insert('', tk.END, values=row)
+
+            self.tabela.pack()
 
         self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).pack()
-
-    def update_lista(self):
-       pass
