@@ -226,8 +226,6 @@ class CreateDFrame(tk.Frame):
         data = calendar.timegm(data.timetuple())
 
         descricao = self.descricao_entry.get("1.0", "end").strip()
-        global nome_user
-        user = nome_user
 
         categoria = self.user_controller.get_modal().get_category_list().get_category_by_name(categoria)
         valor = float(valor)
@@ -246,6 +244,13 @@ class VerDFrame(tk.Frame):
         self.master.title("Ver Despesa")
         self.master.resizable(False, False)
         self.controller = Controller(modal)
+        # Para conseguir Fazer por ordem ascendente descente e voltar ao normal ao clickar nos header
+        self.ordenar_estado = {
+            "category": 'normal',
+            "description": 'normal',
+            "value": 'normal',
+            "timestamp": 'normal'
+        }
 
         expenses = self.controller.get_expenses_filtered(user=modal.get_current_user())
 
@@ -265,12 +270,13 @@ class VerDFrame(tk.Frame):
                 node = node.get_node()
 
             self.tabela = ttk.Treeview(self, columns=["category", "description", "value", "timestamp"],
-                                       show='headings')
+                                       show='headings',selectmode ='browse')
+            self.tabela.pack()
 
-            self.tabela.heading("category", text="Category")
-            self.tabela.heading("description", text="Description")
-            self.tabela.heading("value", text="Value")
-            self.tabela.heading("timestamp", text="Date")
+            self.tabela.heading("category", text="Category", command=lambda: self.tabela_header_click(0))
+            self.tabela.heading("description", text="Description",command=lambda: self.tabela_header_click(1))
+            self.tabela.heading("value", text="Value",command=lambda: self.tabela_header_click(2))
+            self.tabela.heading("timestamp", text="Date",command=lambda: self.tabela_header_click(3))
 
             for row in rows:
                 self.tabela.insert('', tk.END, values=row)
@@ -278,3 +284,15 @@ class VerDFrame(tk.Frame):
             self.tabela.pack()
 
         self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).pack()
+
+    def tabela_header_click(self,column):
+        if column is not None:
+            estado_atual = self.sort_states[column]
+        
+        if estado_atual == 'asc':
+            pass
+        elif estado_atual == 'desc':
+            self.sort_states[column] = 'normal'
+            pass
+        else:
+            pass 
