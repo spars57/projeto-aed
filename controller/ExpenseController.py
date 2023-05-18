@@ -32,8 +32,8 @@ class ExpenseController:
         if user_list.get_user_by_username(expense.get_user().get_username()) is None:
             return f"Utilizador '{expense.get_user().get_username()}' não registado"
         
-        if category_list.get_category_by_name(expense.get_category().get_name()) is None:
-            return f"Categoria '{expense.get_category().get_name()}' não registada"
+        # if category_list.get_category_by_name(expense.get_category().get_name()) is None:
+        #     return f"Categoria '{expense.get_category().get_name()}' não registada"
 
         if float(expense.get_value()) > expense.get_user().get_balance():
             return f"Saldo insuficiente, o seu saldo é {expense.get_user().get_balance()}€ e a operação que tentou efetuar é de {expense.get_value()}€"
@@ -61,3 +61,5 @@ class ExpenseController:
         expense_list.insert_first(expense)
 
         return f"Operação '{expense.get_description()}' registada com sucesso"
+
+  

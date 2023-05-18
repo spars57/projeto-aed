@@ -229,7 +229,24 @@ class CreateDFrame(tk.Frame):
 class VerDFrame(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
+        self.user_controller = Controller(modal)
         self.master.title("Ver Despesa")
         self.master.resizable(False, False)
+        colunas_lista = ("Categoria", "Valor", "Data", "Descrição")
+        
+
+        self.lista_despesas = ttk.Treeview(self,columns=colunas_lista)
+        self.lista_despesas.heading("Categoria", text="Categoria")
+        self.lista_despesas.heading("Valor", text="Valor")
+        self.lista_despesas.heading("Data", text="Data")
+        self.lista_despesas.heading("Descrição", text="Descrição")
+        self.lista_despesas.pack()
+        self.update_lista()
+
+        self.atualizar_lista = tk.Button (self, text="Atualizar", command=lambda: self.update_lista())
+        self.atualizar_lista.pack()
 
         self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).pack()
+
+    def update_lista(self):
+       pass
