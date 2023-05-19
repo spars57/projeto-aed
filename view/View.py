@@ -92,36 +92,42 @@ class MainFrame(tk.Frame):
 
 class RegisterFrame(tk.Frame):
     def __init__(self, master):
-        tk.Frame.__init__(self, master)
+        tk.Frame.__init__(self, master, bg="#17223b")
         self.master.title('Criar Utilizador')
         self.master.resizable(False, False)
         self.verificar_numb = (self.register(self.verficar_nif))
         self.verificar_espaco = (self.register(self.verficar_espac))
         self.user_controller = Controller(modal)
 
-        self.create_user_label = tk.Label(self, text="Username:").grid(row=0, column=0)
-        self.create_user_entry = tk.Entry(self, validate='all', validatecommand=(self.verificar_espaco, '%P'))
+        self.create_user_label = tk.Label(self, text="Username:", font=("Comic Sans MS", 14), bg="#17223b", fg="#ffa200")
+        self.create_user_label.grid(row=0, column=0)
+        self.create_user_entry = tk.Entry(self, font=(18), bg="#6b778d", fg="#17223b", validate='all', validatecommand=(self.verificar_espaco, '%P'))
         self.create_user_entry.grid(row=0, column=1)
 
-        self.create_nif_label = tk.Label(self, text="NIF:").grid(row=1, column=0)
-        self.create_nif_entry = tk.Entry(self, validate='all', validatecommand=(self.verificar_numb, '%P'))
+        self.create_nif_label = tk.Label(self, text="NIF:", font=("Comic Sans MS", 14), bg="#17223b", fg="#ffa200")
+        self.create_nif_label.grid(row=1, column=0)
+        self.create_nif_entry = tk.Entry(self, font=(18), bg="#6b778d", fg="#17223b", validate='all', validatecommand=(self.verificar_numb, '%P'))
         self.create_nif_entry.grid(row=1, column=1)
 
-        self.create_password_label = tk.Label(self, text="Password:").grid(row=2, column=0)
-        self.create_password_entry = tk.Entry(self, show="*", validate='all',
+        self.create_password_label = tk.Label(self, text="Password:", font=("Comic Sans MS", 14), bg="#17223b", fg="#ffa200")
+        self.create_password_label.grid(row=2, column=0)
+        self.create_password_entry = tk.Entry(self, show="*", font=(18), bg="#6b778d", fg="#17223b", validate='all',
                                               validatecommand=(self.verificar_espaco, '%P'))
         self.create_password_entry.grid(row=2, column=1)
 
-        self.rep_password_label = tk.Label(self, text="Repeat Password:").grid(row=3, column=0)
-        self.rep_password_entry = tk.Entry(self, show="*", validate='all',
+        self.rep_password_label = tk.Label(self, text="Repeat Password:", font=("Comic Sans MS", 14), bg="#17223b", fg="#ffa200")
+        self.rep_password_label.grid(row=3, column=0)
+        self.rep_password_entry = tk.Entry(self, show="*", font=(18), bg="#6b778d", fg="#17223b", validate='all',
                                            validatecommand=(self.verificar_espaco, '%P'))
         self.rep_password_entry.grid(row=3, column=1)
 
-        self.register_button = tk.Button(self, text="Registar Utilizador", command=lambda: self.registar())
+        self.register_button = tk.Button(self, text="Registar Utilizador", font=("Comic Sans MS", 12), bg="#6b778d",
+                                       fg="#17223b", command=lambda: self.registar())
         self.register_button.grid(row=4, column=1)
 
-        self.voltar_button = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(MainFrame)).grid(row=4,
-                                                                                                                 column=0)
+        self.voltar_button = tk.Button(self, text="Voltar", font=("Comic Sans MS", 10), bg="#6b778d", fg="#17223b",
+                                        command=lambda: master.switch_frame(MainFrame))
+        self.voltar_button.grid(row=4,column=0)
 
     def registar(self):
         user = self.create_user_entry.get()
@@ -165,16 +171,25 @@ class RegisterFrame(tk.Frame):
 
 class SessionFrame(tk.Frame):
     def __init__(self, master):
-        tk.Frame.__init__(self, master)
+        tk.Frame.__init__(self, master, bg="#17223b")
         self.master.title("Sessão")
         self.master.resizable(False, False)
 
-        self.label = tk.Label(self, text="Bem Vindo").pack()
+        self.label = tk.Label(self, text="Bem Vindo ", font=("Comic Sans MS", 14), bg="#17223b",
+                             fg="#ffa200")
+        self.label.pack()
 
-        self.criar = tk.Button(self, text="Criar Despesa", command=lambda: master.switch_frame(CreateDFrame)).pack()
-        self.criar = tk.Button(self, text="Vizualizar Despesa", command=lambda: master.switch_frame(VerDFrame)).pack()
+        self.criar = tk.Button(self, text="Criar Despesa", font=("Comic Sans MS", 12), bg="#6b778d",
+                                       fg="#17223b", command=lambda: master.switch_frame(CreateDFrame))
+        self.criar.pack()
 
-        self.retroceder = tk.Button(self, text="Terminar Sessão", command=lambda: master.switch_frame(MainFrame)).pack()
+        self.ver = tk.Button(self, text="Vizualizar Despesa", font=("Comic Sans MS", 12), bg="#6b778d",
+                                       fg="#17223b", command=lambda: master.switch_frame(VerDFrame))
+        self.ver.pack()
+
+        self.retroceder = tk.Button(self, text="Terminar Sessão", font=("Comic Sans MS", 12), bg="#6b778d",
+                                       fg="#17223b", command=lambda: master.switch_frame(MainFrame))
+        self.retroceder.pack()
 
 
 class CreateDFrame(tk.Frame):
