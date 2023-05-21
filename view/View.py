@@ -198,6 +198,7 @@ class CreateDFrame(tk.Frame):
         self.user_controller = Controller(modal)
         self.master.title("Criar Despesa")
         self.master.resizable(False, False)
+        self.verificar_numero = (self.register(self.verificar_numero))
         self.selected_date = None
 
         for item in ['Casa', 'Passe', 'Alimentação', 'Roupa', 'Outros']:
@@ -207,11 +208,12 @@ class CreateDFrame(tk.Frame):
         self.categoria_label.grid(row=0, column=0)
         self.categoria_combo = ttk.Combobox(self, values=self.user_controller.get_all_category_names(),
                                             state='readonly')
+        self.categoria_combo.current(0)
         self.categoria_combo.grid(row=0, column=1)
 
         self.valor_label = tk.Label(self, text="Valor*:")
         self.valor_label.grid(row=1, column=0)
-        self.valor_entry = tk.Entry(self)
+        self.valor_entry = tk.Entry(self, validate='key', validatecommand=(self.verificar_numero, '%P'))
         self.valor_entry.grid(row=1, column=1)
 
         self.data_label = tk.Label(self, text="Data*:")
@@ -230,6 +232,14 @@ class CreateDFrame(tk.Frame):
         self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame))
         self.retroceder.grid(row=4, column=0)
 
+#A cada click vai validar se o que o User pos se dá para converter para float
+    def verificar_numero(self, valor):
+        try:
+            float(valor)  
+            return True
+        except ValueError:
+            return False
+        
     def criar_despesa(self):
         categoria = self.categoria_combo.get()
         valor = self.valor_entry.get()
@@ -253,20 +263,14 @@ class CreateDFrame(tk.Frame):
             showerror('Error', retorno)
 
 
+
+
 class VerDFrame(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         self.master.title("Ver Despesa")
         self.master.resizable(False, False)
         self.controller = Controller(modal)
-        # Para conseguir Fazer por ordem ascendente descente e voltar ao normal ao clickar nos header
-        self.ordenar_estado = {
-            "category": 'normal',
-            "description": 'normal',
-            "value": 'normal',
-            "timestamp": 'normal'
-        }
-
         expenses = self.controller.get_expenses_filtered(user=modal.get_current_user())
 
         if expenses is None:
@@ -288,10 +292,10 @@ class VerDFrame(tk.Frame):
                                        show='headings',selectmode ='browse')
             self.tabela.pack()
 
-            self.tabela.heading("category", text="Category", command=lambda: self.tabela_header_click(0))
-            self.tabela.heading("description", text="Description",command=lambda: self.tabela_header_click(1))
-            self.tabela.heading("value", text="Value",command=lambda: self.tabela_header_click(2))
-            self.tabela.heading("timestamp", text="Date",command=lambda: self.tabela_header_click(3))
+            self.tabela.heading("category", text="Category", command=lambda: self.tabela_header_click_asc("category"))
+            self.tabela.heading("description", text="Description",command=lambda: self.tabela_header_click_asc("description"))
+            self.tabela.heading("value", text="Value",command=lambda: self.tabela_header_click_asc("value"))
+            self.tabela.heading("timestamp", text="Date",command=lambda: self.tabela_header_click_asc("timestamp"))
 
             for row in rows:
                 self.tabela.insert('', tk.END, values=row)
@@ -300,14 +304,46 @@ class VerDFrame(tk.Frame):
 
         self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).pack()
 
-    def tabela_header_click(self,column):
-        if column is not None:
-            estado_atual = self.sort_states[column]
-        
-        if estado_atual == 'asc':
-            pass
-        elif estado_atual == 'desc':
-            self.sort_states[column] = 'normal'
-            pass
-        else:
-            pass 
+    def tabela_header_click_asc(self,column):
+        lista_ordernar_asc = [(self.tabela.set(dados, column), dados) for dados in self.tabela.get_children('')]
+        lista_ordernar_asc.sort(key=lambda x: x[0])
+
+        # Reorganizar as linhas na Treeview
+        for index, (value, dados) in enumerate(lista_ordernar_asc):
+            self.tabela.move(dados, "", index)
+        self.tabela.heading(column, command=lambda: self.tabela_header_click_desc(column))
+
+    def tabela_header_click_desc(self, column):
+        # Obter os dados da Treeview
+        lista_ordernar_desc = [(self.tabela.set(dados, column), dados) for dados in self.tabela.get_children("")]
+
+        # Classificar os dados em ordem reversa com base na coluna selecionada
+        lista_ordernar_desc.sort(key=lambda x: x[0], reverse=True)
+
+        # Reorganizar as linhas na Treeview
+        for index, (value, dados) in enumerate(lista_ordernar_desc):
+            self.tabela.move(dados, "", index)
+
+        self.tabela.heading(column, command=lambda: self.tabela_header_click_normal(column))
+
+    def tabela_header_click_normal(self, column):
+        expenses = self.controller.get_expenses_filtered(user=modal.get_current_user())
+        for item in self.tabela.get_children():
+            self.tabela.delete(item)
+        rows = []
+
+        node = expenses.get_first()
+
+        while node is not None:
+            data: Expense = node.get_data()
+
+            rows.append(
+                [data.get_category().get_name(), data.get_description(), f"{str(data.get_value())}€",
+                str(datetime.fromtimestamp(data.get_timestamp()))])
+            node = node.get_node()
+
+        for row in rows:
+                self.tabela.insert('', tk.END, values=row)
+
+        # Alternar a direção da classificação ao clicar novamente no header
+        self.tabela.heading(column, command=lambda: self.tabela_header_click_asc(column))
