@@ -5,6 +5,7 @@ from modal.Modal import Modal
 class CategoryController:
     def __init__(self, modal: Modal):
         self.__modal: Modal = modal
+        self.get_category_by_name = modal.get_category_list().get_category_by_name
 
     def create_category(self, name: str) -> str:
         return self.__add_category(Category(name=name))

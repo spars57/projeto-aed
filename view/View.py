@@ -12,7 +12,10 @@ from controller.Controller import Controller
 from modal.Modal import Modal
 
 modal = Modal()
+controller = Controller(modal)
 global nome_user
+
+TABLE_ROWS = []
 
 
 class Frame(tk.Tk):
@@ -34,10 +37,28 @@ class MainFrame(tk.Frame):
         tk.Frame.__init__(self, master, bg="#17223b")
         self.master.resizable(False, False)
         self.master.title('Iniciar Sessão')
-        self.user_controller = Controller(modal)
-        self.user_controller.create_user("a", "1", 229156347)
-        self.user_controller.create_user("b", "2", 229156347)
-        self.user_controller.get_modal().get_user_list().get_user_by_username("a").set_balance(5000)
+        self.controller = Controller(modal)
+
+        self.controller.create_user("a", "1", 229156347)
+        self.controller.create_user("b", "2", 229156347)
+        self.controller.get_modal().get_user_list().get_user_by_username("a").set_balance(5000)
+
+        for item in ['Casa', 'Passe', 'Alimentação', 'Roupa', 'Outros']:
+            controller.create_category(item)
+
+        self.controller.get_modal().set_current_user(controller.get_user_by_username("a"))
+
+        self.controller.create_expense(category=controller.get_category_by_name("Roupa"), value=100, timestamp=0)
+        self.controller.create_expense(category=controller.get_category_by_name("Outros"), value=200, timestamp=5)
+        self.controller.create_expense(category=controller.get_category_by_name("Casa"), value=300, timestamp=10)
+
+        self.controller.create_expense(category=controller.get_category_by_name("Roupa"), value=100, timestamp=20)
+        self.controller.create_expense(category=controller.get_category_by_name("Outros"), value=200, timestamp=30)
+        self.controller.create_expense(category=controller.get_category_by_name("Casa"), value=300, timestamp=40)
+
+        self.controller.create_expense(category=controller.get_category_by_name("Roupa"), value=100, timestamp=50)
+        self.controller.create_expense(category=controller.get_category_by_name("Outros"), value=200, timestamp=100)
+        self.controller.create_expense(category=controller.get_category_by_name("Casa"), value=300, timestamp=200)
 
         self.welc = tk.Label(self, text="Bem Vindo ao Gestor de Despesas", font=("Comic Sans MS", 14), bg="#17223b",
                              fg="#ffa200")
@@ -80,7 +101,7 @@ class MainFrame(tk.Frame):
             showerror('Error', 'Campos Vazios')
             return
 
-        response = self.user_controller.login(user, password)
+        response = self.controller.login(user, password)
 
         if response:
             self.master.switch_frame(SessionFrame)
@@ -99,35 +120,40 @@ class RegisterFrame(tk.Frame):
         self.verificar_espaco = (self.register(self.verficar_espac))
         self.user_controller = Controller(modal)
 
-        self.create_user_label = tk.Label(self, text="Username:", font=("Comic Sans MS", 14), bg="#17223b", fg="#ffa200")
+        self.create_user_label = tk.Label(self, text="Username:", font=("Comic Sans MS", 14), bg="#17223b",
+                                          fg="#ffa200")
         self.create_user_label.grid(row=0, column=0)
-        self.create_user_entry = tk.Entry(self, font=(18), bg="#6b778d", fg="#17223b", validate='all', validatecommand=(self.verificar_espaco, '%P'))
+        self.create_user_entry = tk.Entry(self, font=(18), bg="#6b778d", fg="#17223b", validate='all',
+                                          validatecommand=(self.verificar_espaco, '%P'))
         self.create_user_entry.grid(row=0, column=1)
 
         self.create_nif_label = tk.Label(self, text="NIF:", font=("Comic Sans MS", 14), bg="#17223b", fg="#ffa200")
         self.create_nif_label.grid(row=1, column=0)
-        self.create_nif_entry = tk.Entry(self, font=(18), bg="#6b778d", fg="#17223b", validate='all', validatecommand=(self.verificar_numb, '%P'))
+        self.create_nif_entry = tk.Entry(self, font=(18), bg="#6b778d", fg="#17223b", validate='all',
+                                         validatecommand=(self.verificar_numb, '%P'))
         self.create_nif_entry.grid(row=1, column=1)
 
-        self.create_password_label = tk.Label(self, text="Password:", font=("Comic Sans MS", 14), bg="#17223b", fg="#ffa200")
+        self.create_password_label = tk.Label(self, text="Password:", font=("Comic Sans MS", 14), bg="#17223b",
+                                              fg="#ffa200")
         self.create_password_label.grid(row=2, column=0)
         self.create_password_entry = tk.Entry(self, show="*", font=(18), bg="#6b778d", fg="#17223b", validate='all',
                                               validatecommand=(self.verificar_espaco, '%P'))
         self.create_password_entry.grid(row=2, column=1)
 
-        self.rep_password_label = tk.Label(self, text="Repeat Password:", font=("Comic Sans MS", 14), bg="#17223b", fg="#ffa200")
+        self.rep_password_label = tk.Label(self, text="Repeat Password:", font=("Comic Sans MS", 14), bg="#17223b",
+                                           fg="#ffa200")
         self.rep_password_label.grid(row=3, column=0)
         self.rep_password_entry = tk.Entry(self, show="*", font=(18), bg="#6b778d", fg="#17223b", validate='all',
                                            validatecommand=(self.verificar_espaco, '%P'))
         self.rep_password_entry.grid(row=3, column=1)
 
         self.register_button = tk.Button(self, text="Registar Utilizador", font=("Comic Sans MS", 12), bg="#6b778d",
-                                       fg="#17223b", command=lambda: self.registar())
+                                         fg="#17223b", command=lambda: self.registar())
         self.register_button.grid(row=4, column=1)
 
         self.voltar_button = tk.Button(self, text="Voltar", font=("Comic Sans MS", 10), bg="#6b778d", fg="#17223b",
-                                        command=lambda: master.switch_frame(MainFrame))
-        self.voltar_button.grid(row=4,column=0)
+                                       command=lambda: master.switch_frame(MainFrame))
+        self.voltar_button.grid(row=4, column=0)
 
     def registar(self):
         user = self.create_user_entry.get()
@@ -176,19 +202,19 @@ class SessionFrame(tk.Frame):
         self.master.resizable(False, False)
 
         self.label = tk.Label(self, text="Bem Vindo ", font=("Comic Sans MS", 14), bg="#17223b",
-                             fg="#ffa200")
+                              fg="#ffa200")
         self.label.pack()
 
         self.criar = tk.Button(self, text="Criar Despesa", font=("Comic Sans MS", 12), bg="#6b778d",
-                                       fg="#17223b", command=lambda: master.switch_frame(CreateDFrame))
+                               fg="#17223b", command=lambda: master.switch_frame(CreateDFrame))
         self.criar.pack()
 
         self.ver = tk.Button(self, text="Vizualizar Despesa", font=("Comic Sans MS", 12), bg="#6b778d",
-                                       fg="#17223b", command=lambda: master.switch_frame(VerDFrame))
+                             fg="#17223b", command=lambda: master.switch_frame(VerDFrame))
         self.ver.pack()
 
         self.retroceder = tk.Button(self, text="Terminar Sessão", font=("Comic Sans MS", 12), bg="#6b778d",
-                                       fg="#17223b", command=lambda: master.switch_frame(MainFrame))
+                                    fg="#17223b", command=lambda: master.switch_frame(MainFrame))
         self.retroceder.pack()
 
 
@@ -200,9 +226,6 @@ class CreateDFrame(tk.Frame):
         self.master.resizable(False, False)
         self.verificar_numero = (self.register(self.verificar_numero))
         self.selected_date = None
-
-        for item in ['Casa', 'Passe', 'Alimentação', 'Roupa', 'Outros']:
-            self.user_controller.create_category(item)
 
         self.categoria_label = tk.Label(self, text="Categoria*:")
         self.categoria_label.grid(row=0, column=0)
@@ -232,14 +255,14 @@ class CreateDFrame(tk.Frame):
         self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame))
         self.retroceder.grid(row=4, column=0)
 
-#A cada click vai validar se o que o User pos se dá para converter para float
+    # A cada click vai validar se o que o User pos se dá para converter para float
     def verificar_numero(self, valor):
         try:
-            float(valor)  
+            float(valor)
             return True
         except ValueError:
             return False
-        
+
     def criar_despesa(self):
         categoria = self.categoria_combo.get()
         valor = self.valor_entry.get()
@@ -263,27 +286,26 @@ class CreateDFrame(tk.Frame):
             showerror('Error', retorno)
 
 
-
-
 class VerDFrame(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         self.master.title("Ver Despesa")
+        self.filters = {}
         self.master.resizable(False, False)
         self.controller = Controller(modal)
-        
-        expenses = self.preencher_tabela()
+
+        self.preencher_tabela()
 
         self.tabela = ttk.Treeview(self, columns=["category", "description", "value", "timestamp"],
-                                       show='headings',selectmode ='browse')
-
+                                   show='headings', selectmode='browse')
 
         self.tabela.heading("category", text="Category", command=lambda: self.tabela_header_click_asc("category"))
-        self.tabela.heading("description", text="Description",command=lambda: self.tabela_header_click_asc("description"))
-        self.tabela.heading("value", text="Value",command=lambda: self.tabela_header_click_asc("value"))
-        self.tabela.heading("timestamp", text="Date",command=lambda: self.tabela_header_click_asc("timestamp"))
+        self.tabela.heading("description", text="Description",
+                            command=lambda: self.tabela_header_click_asc("description"))
+        self.tabela.heading("value", text="Value", command=lambda: self.tabela_header_click_asc("value"))
+        self.tabela.heading("timestamp", text="Date", command=lambda: self.tabela_header_click_asc("timestamp"))
 
-        for row in expenses:
+        for row in TABLE_ROWS:
             self.tabela.insert('', tk.END, values=row)
 
         self.tabela.grid(row=0, column=0, columnspan=2)
@@ -293,12 +315,41 @@ class VerDFrame(tk.Frame):
         self.categoria_filtrar.current(0)
         self.categoria_filtrar.grid(row=1, column=0, sticky='s')
 
-
-
         self.butao_filtrar = tk.Button(self, text="Filtrar", command=self.filtrar)
         self.butao_filtrar.grid(row=4, column=1)
 
-        self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).grid(column=1,row=6,sticky='s')
+        self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).grid(
+            column=1, row=6, sticky='s')
+
+    def filtrar(self):
+        category_name = self.categoria_filtrar.get()
+        category = self.controller.get_category_by_name(category_name)
+        categories = []
+        categories.append(category)
+
+        expenses = self.controller.get_expenses_filtered(user=modal.get_current_user(), categories=categories)
+
+        if expenses is None:
+            showerror('Error', 'Sem despesas para mostrar')
+        else:
+            ## clear all table rows
+            for i in self.tabela.get_children():
+                self.tabela.delete(i)
+
+            TABLE_ROWS = []
+
+            node = expenses.get_first()
+
+            while node is not None:
+                data: Expense = node.get_data()
+
+                TABLE_ROWS.append(
+                    [data.get_category().get_name(), data.get_description(), f"{str(data.get_value())}€",
+                     str(datetime.fromtimestamp(data.get_timestamp()))])
+                node = node.get_node()
+
+            for row in TABLE_ROWS:
+                self.tabela.insert('', tk.END, values=row)
 
     def preencher_tabela(self):
         expenses = self.controller.get_expenses_filtered(user=modal.get_current_user())
@@ -306,42 +357,17 @@ class VerDFrame(tk.Frame):
         if expenses is None:
             showerror('Error', 'Sem despesas para mostrar')
         else:
-            rows = []
-
             node = expenses.get_first()
 
             while node is not None:
                 data: Expense = node.get_data()
 
-                rows.append(
+                TABLE_ROWS.append(
                     [data.get_category().get_name(), data.get_description(), f"{str(data.get_value())}€",
                      str(datetime.fromtimestamp(data.get_timestamp()))])
                 node = node.get_node()
-        return rows
-    
-    def filtrar(self):
-        self.tabela.delete()
-        categoria = self.categoria_filtrar.current()
-     
-        expenses = self.controller.get_expenses_filtered(user=modal.get_current_user())
 
-        if expenses is None:
-            showerror('Error', 'Sem despesas para mostrar')
-        else:
-            rows = []
-
-            node = expenses.get_first()
-
-            while node is not None:
-                data: Expense = node.get_data()
-
-                rows.append(
-                    [data.get_category().get_name(), data.get_description(), f"{str(data.get_value())}€",
-                     str(datetime.fromtimestamp(data.get_timestamp()))])
-                node = node.get_node()
-        return rows
-
-    def tabela_header_click_asc(self,column):
+    def tabela_header_click_asc(self, column):
         lista_ordernar_asc = [(self.tabela.set(dados, column), dados) for dados in self.tabela.get_children('')]
         lista_ordernar_asc.sort(key=lambda x: x[0])
 
@@ -376,11 +402,11 @@ class VerDFrame(tk.Frame):
 
             rows.append(
                 [data.get_category().get_name(), data.get_description(), f"{str(data.get_value())}€",
-                str(datetime.fromtimestamp(data.get_timestamp()))])
+                 str(datetime.fromtimestamp(data.get_timestamp()))])
             node = node.get_node()
 
         for row in rows:
-                self.tabela.insert('', tk.END, values=row)
+            self.tabela.insert('', tk.END, values=row)
 
         # Alternar a direção da classificação ao clicar novamente no header
         self.tabela.heading(column, command=lambda: self.tabela_header_click_asc(column))

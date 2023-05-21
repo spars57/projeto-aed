@@ -7,6 +7,7 @@ from utils.passwords import encrypt
 class UserController:
     def __init__(self, modal: Modal):
         self.__modal: Modal = modal
+        self.get_user_by_username = modal.get_user_list().get_user_by_username
 
     def login(self, username: str, password: str) -> bool:
         user = self.__modal.get_user_list().get_user_by_username(username)
