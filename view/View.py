@@ -223,7 +223,7 @@ class CreateDFrame(tk.Frame):
 
         self.descricao_label = tk.Label(self, text="Descrição:")
         self.descricao_label.grid(row=3, column=0)
-        self.descricao_entry = tk.Text(self, width=50, height=10)
+        self.descricao_entry = tk.Text(self, width=30, height=5)
         self.descricao_entry.grid(row=3, column=1)
 
         self.registar = tk.Button(self, text="Registar Despesa", command=self.criar_despesa)
@@ -271,6 +271,36 @@ class VerDFrame(tk.Frame):
         self.master.title("Ver Despesa")
         self.master.resizable(False, False)
         self.controller = Controller(modal)
+        
+        expenses = self.preencher_tabela()
+
+        self.tabela = ttk.Treeview(self, columns=["category", "description", "value", "timestamp"],
+                                       show='headings',selectmode ='browse')
+
+
+        self.tabela.heading("category", text="Category", command=lambda: self.tabela_header_click_asc("category"))
+        self.tabela.heading("description", text="Description",command=lambda: self.tabela_header_click_asc("description"))
+        self.tabela.heading("value", text="Value",command=lambda: self.tabela_header_click_asc("value"))
+        self.tabela.heading("timestamp", text="Date",command=lambda: self.tabela_header_click_asc("timestamp"))
+
+        for row in expenses:
+            self.tabela.insert('', tk.END, values=row)
+
+        self.tabela.grid(row=0, column=0, columnspan=2)
+
+        self.categoria_label = tk.Label(self, text="Categoria:").grid(row=1, column=0, sticky='w')
+        self.categoria_filtrar = ttk.Combobox(self, values=self.controller.get_all_category_names(), state='readonly')
+        self.categoria_filtrar.current(0)
+        self.categoria_filtrar.grid(row=1, column=0, sticky='s')
+
+
+
+        self.butao_filtrar = tk.Button(self, text="Filtrar", command=self.filtrar)
+        self.butao_filtrar.grid(row=4, column=1)
+
+        self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).grid(column=1,row=6,sticky='s')
+
+    def preencher_tabela(self):
         expenses = self.controller.get_expenses_filtered(user=modal.get_current_user())
 
         if expenses is None:
@@ -287,22 +317,29 @@ class VerDFrame(tk.Frame):
                     [data.get_category().get_name(), data.get_description(), f"{str(data.get_value())}€",
                      str(datetime.fromtimestamp(data.get_timestamp()))])
                 node = node.get_node()
+        return rows
+    
+    def filtrar(self):
+        self.tabela.delete()
+        categoria = self.categoria_filtrar.current()
+     
+        expenses = self.controller.get_expenses_filtered(user=modal.get_current_user())
 
-            self.tabela = ttk.Treeview(self, columns=["category", "description", "value", "timestamp"],
-                                       show='headings',selectmode ='browse')
-            self.tabela.pack()
+        if expenses is None:
+            showerror('Error', 'Sem despesas para mostrar')
+        else:
+            rows = []
 
-            self.tabela.heading("category", text="Category", command=lambda: self.tabela_header_click_asc("category"))
-            self.tabela.heading("description", text="Description",command=lambda: self.tabela_header_click_asc("description"))
-            self.tabela.heading("value", text="Value",command=lambda: self.tabela_header_click_asc("value"))
-            self.tabela.heading("timestamp", text="Date",command=lambda: self.tabela_header_click_asc("timestamp"))
+            node = expenses.get_first()
 
-            for row in rows:
-                self.tabela.insert('', tk.END, values=row)
+            while node is not None:
+                data: Expense = node.get_data()
 
-            self.tabela.pack()
-
-        self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).pack()
+                rows.append(
+                    [data.get_category().get_name(), data.get_description(), f"{str(data.get_value())}€",
+                     str(datetime.fromtimestamp(data.get_timestamp()))])
+                node = node.get_node()
+        return rows
 
     def tabela_header_click_asc(self,column):
         lista_ordernar_asc = [(self.tabela.set(dados, column), dados) for dados in self.tabela.get_children('')]
