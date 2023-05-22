@@ -13,7 +13,6 @@ from modal.Modal import Modal
 
 modal = Modal()
 controller = Controller(modal)
-global nome_user
 
 TABLE_ROWS = []
 
@@ -52,13 +51,13 @@ class MainFrame(tk.Frame):
         self.controller.create_expense(category=controller.get_category_by_name("Outros"), value=200, timestamp=5)
         self.controller.create_expense(category=controller.get_category_by_name("Casa"), value=300, timestamp=10)
 
-        self.controller.create_expense(category=controller.get_category_by_name("Roupa"), value=100, timestamp=20)
-        self.controller.create_expense(category=controller.get_category_by_name("Outros"), value=200, timestamp=30)
-        self.controller.create_expense(category=controller.get_category_by_name("Casa"), value=300, timestamp=40)
+        self.controller.create_expense(category=controller.get_category_by_name("Roupa"), value=400, timestamp=20)
+        self.controller.create_expense(category=controller.get_category_by_name("Outros"), value=500, timestamp=30)
+        self.controller.create_expense(category=controller.get_category_by_name("Casa"), value=600, timestamp=40)
 
-        self.controller.create_expense(category=controller.get_category_by_name("Roupa"), value=100, timestamp=50)
-        self.controller.create_expense(category=controller.get_category_by_name("Outros"), value=200, timestamp=100)
-        self.controller.create_expense(category=controller.get_category_by_name("Casa"), value=300, timestamp=200)
+        self.controller.create_expense(category=controller.get_category_by_name("Roupa"), value=700, timestamp=50)
+        self.controller.create_expense(category=controller.get_category_by_name("Outros"), value=800, timestamp=100)
+        self.controller.create_expense(category=controller.get_category_by_name("Casa"), value=900, timestamp=200)
 
         self.welc = tk.Label(self, text="Bem Vindo ao Gestor de Despesas", font=("Comic Sans MS", 14), bg="#17223b",
                              fg="#ffa200")
@@ -315,6 +314,14 @@ class VerDFrame(tk.Frame):
         self.categoria_filtrar.current(0)
         self.categoria_filtrar.grid(row=1, column=0, sticky='s')
 
+        self.value_min = tk.Label(self, text="Valor Mínimo:").grid(row=2, column=0, sticky='w')
+        self.value_min = ttk.Entry(self)
+        self.value_min.grid(row=2, column=0, sticky='s')
+
+        self.value_max = tk.Label(self, text="Valor Máximo:").grid(row=3, column=0, sticky='w')
+        self.value_max = ttk.Entry(self)
+        self.value_max.grid(row=3, column=0, sticky='s')
+
         self.butao_filtrar = tk.Button(self, text="Filtrar", command=self.filtrar)
         self.butao_filtrar.grid(row=4, column=1)
 
@@ -326,8 +333,15 @@ class VerDFrame(tk.Frame):
         category = self.controller.get_category_by_name(category_name)
         categories = []
         categories.append(category)
+        value_minimum = int(self.value_min.get()) if self.value_min.get() != "" else None
+        value_maximum = int(self.value_max.get()) if self.value_max.get() != "" else None
 
-        expenses = self.controller.get_expenses_filtered(user=modal.get_current_user(), categories=categories)
+        expenses = self.controller.get_expenses_filtered(
+            user=modal.get_current_user(),
+            categories=categories,
+            value_minimum=value_minimum,
+            value_maximum=value_maximum
+        )
 
         if expenses is None:
             showerror('Error', 'Sem despesas para mostrar')
