@@ -5,7 +5,7 @@ from datetime import datetime
 from tkinter import ttk
 from tkinter.messagebox import *
 
-from tkcalendar import Calendar
+from tkcalendar import Calendar, DateEntry
 
 from classes.Expense import Expense
 from controller.Controller import Controller
@@ -318,7 +318,6 @@ class VerDFrame(tk.Frame):
         self.categoria_label = tk.Label(self,text="Categoria:", font=("Comic Sans MS", 14), bg="#17223b",
                              fg="#ffa200").grid(row=1, column=0, sticky='w')
         self.categoria_filtrar = ttk.Combobox(self, values=self.controller.get_all_category_names(), state='readonly')
-        self.categoria_filtrar.current(0)
         self.categoria_filtrar.grid(row=1, column=0, sticky='s')
 
         self.value_min = tk.Label(self, text="Valor Mínimo:", font=("Comic Sans MS", 14), bg="#17223b",
@@ -331,27 +330,48 @@ class VerDFrame(tk.Frame):
         self.value_max = tk.Entry(self, bg="#6b778d", fg="#17223b")
         self.value_max.grid(row=3, column=0, sticky='s')
 
+        self.date_min = tk.Label(self, text="Data Minima:", font=("Comic Sans MS", 14), bg="#17223b",
+                             fg="#ffa200").grid(row=4, column=0, sticky='w')
+        self.data_min = DateEntry(self, width= 16, foreground= "white",bd=2,dateformat=4,date_pattern='YYYY-MM-DD')
+        self.data_min.grid(row=4, column=0)
+
+        self.data_max = tk.Label(self, text="Data Maxima:", font=("Comic Sans MS", 14), bg="#17223b",
+                             fg="#ffa200").grid(row=5, column=0, sticky='w')
+        self.data_max = DateEntry(self, width= 16, foreground= "white",bd=2,dateformat=4,date_pattern='YYYY-MM-DD')
+        self.data_max.grid(row=5, column=0)
+        
+
         self.butao_filtrar = tk.Button(self, text="Filtrar", font=("Comic Sans MS", 12), bg="#6b778d",
                                       fg="#17223b", command=self.filtrar)
-        self.butao_filtrar.grid(row=4, column=1)
+        self.butao_filtrar.grid(row=7, column=0, sticky='w')
 
         self.retroceder = tk.Button(self, text="Voltar", font=("Comic Sans MS", 12), bg="#6b778d",
                                       fg="#17223b", command=lambda: master.switch_frame(SessionFrame)).grid(
-            column=1, row=6, sticky='s')
+            column=0, row=8, sticky='e')
 
     def filtrar(self):
-        category_name = self.categoria_filtrar.get()
+        category_name = self.categoria_filtrar.get() if self.categoria_filtrar.get() != "" else None
         category = self.controller.get_category_by_name(category_name)
         categories = []
         categories.append(category)
         value_minimum = int(self.value_min.get()) if self.value_min.get() != "" else None
         value_maximum = int(self.value_max.get()) if self.value_max.get() != "" else None
 
+        if self.data_min.get_date() < self.data_max.get_date():
+            date_minimum = self.data_min.get_date() 
+            date_maximum= self.data_max.get_date() 
+
+            date_minimum = calendar.timegm(date_minimum.timetuple())
+
+            date_maximum = calendar.timegm(date_maximum.timetuple())
+
         expenses = self.controller.get_expenses_filtered(
             user=modal.get_current_user(),
             categories=categories,
             value_minimum=value_minimum,
-            value_maximum=value_maximum
+            value_maximum=value_maximum,
+            timestamp_minimum=date_minimum,
+            timestamp_maximum=date_maximum 
         )
 
         if expenses is None:
