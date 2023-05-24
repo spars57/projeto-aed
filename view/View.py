@@ -392,18 +392,18 @@ class VerDFrame(tk.Frame):
                      str(datetime.fromtimestamp(data.get_timestamp()))])
                 node = node.get_node()
 
-    def tabela_header_click_asc(self, column):
-        lista_ordernar_asc = [(self.tabela.set(dados, column), dados) for dados in self.tabela.get_children('')]
+    def tabela_header_click_asc(self, coluna):
+        lista_ordernar_asc = [(self.tabela.set(dados, coluna), dados) for dados in self.tabela.get_children('')]
         lista_ordernar_asc.sort(key=lambda x: x[0])
 
         # Reorganizar as linhas na Treeview
         for index, (value, dados) in enumerate(lista_ordernar_asc):
             self.tabela.move(dados, "", index)
-        self.tabela.heading(column, command=lambda: self.tabela_header_click_desc(column))
+        self.tabela.heading(coluna, command=lambda: self.tabela_header_click_desc(coluna))
 
-    def tabela_header_click_desc(self, column):
+    def tabela_header_click_desc(self, coluna):
         # Obter os dados da Treeview
-        lista_ordernar_desc = [(self.tabela.set(dados, column), dados) for dados in self.tabela.get_children("")]
+        lista_ordernar_desc = [(self.tabela.set(dados, coluna), dados) for dados in self.tabela.get_children("")]
 
         # Classificar os dados em ordem reversa com base na coluna selecionada
         lista_ordernar_desc.sort(key=lambda x: x[0], reverse=True)
@@ -412,26 +412,9 @@ class VerDFrame(tk.Frame):
         for index, (value, dados) in enumerate(lista_ordernar_desc):
             self.tabela.move(dados, "", index)
 
-        self.tabela.heading(column, command=lambda: self.tabela_header_click_normal(column))
+        self.tabela.heading(coluna, command=lambda: self.tabela_header_click_normal(coluna))
 
-    def tabela_header_click_normal(self, column):
-        expenses = self.controller.get_expenses_filtered(user=modal.get_current_user())
-        for item in self.tabela.get_children():
-            self.tabela.delete(item)
-        rows = []
-
-        node = expenses.get_first()
-
-        while node is not None:
-            data: Expense = node.get_data()
-
-            rows.append(
-                [data.get_category().get_name(), data.get_description(), f"{str(data.get_value())}€",
-                 str(datetime.fromtimestamp(data.get_timestamp()))])
-            node = node.get_node()
-
-        for row in rows:
-            self.tabela.insert('', tk.END, values=row)
-
+    def tabela_header_click_normal(self, coluna):
+        self.filtrar()
         # Alternar a direção da classificação ao clicar novamente no header
-        self.tabela.heading(column, command=lambda: self.tabela_header_click_asc(column))
+        self.tabela.heading(coluna, command=lambda: self.tabela_header_click_asc(coluna))
