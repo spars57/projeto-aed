@@ -212,6 +212,10 @@ class SessionFrame(tk.Frame):
                              fg="#17223b", command=lambda: master.switch_frame(VerDFrame))
         self.ver.pack()
 
+        self.ver = tk.Button(self, text="Atualizar Saldo", font=("Comic Sans MS", 12), bg="#6b778d",
+                             fg="#17223b", command=lambda: master.switch_frame(AtualizarSaldoFrame))
+        self.ver.pack()
+
         self.retroceder = tk.Button(self, text="Terminar Sessão", font=("Comic Sans MS", 12), bg="#6b778d",
                                     fg="#17223b", command=lambda: master.switch_frame(MainFrame))
         self.retroceder.pack()
@@ -424,3 +428,30 @@ class VerDFrame(tk.Frame):
 
         # Alternar a direção da classificação ao clicar novamente no header
         self.tabela.heading(column, command=lambda: self.tabela_header_click_asc(column))
+
+
+class AtualizarSaldoFrame(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self, master)
+        self.master.title("Atualizar Saldo")
+        self.filters = {}
+        self.master.resizable(False, False)
+        self.controller = Controller(modal)
+
+        self.saldo = tk.Label(self, text="Saldo").grid(row=2, column=0, sticky='w')
+        self.saldo = ttk.Entry(self)
+        self.saldo.grid(row=2, column=0, sticky='s')
+
+        self.butao_filtrar = tk.Button(self, text="Atualizar", command=self.atualizar)
+        self.butao_filtrar.grid(row=3, column=0)
+
+        self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).grid(
+            column=0, row=4, sticky='s')
+
+    def atualizar(self):
+        saldo = self.saldo.get()
+        if saldo.isnumeric():
+            self.controller.get_modal().get_current_user().set_balance(int(saldo))
+            showinfo('Sucesso', 'Saldo Atualizado com sucesso')
+        else:
+            showerror('Erro', 'Saldo Inválido')
