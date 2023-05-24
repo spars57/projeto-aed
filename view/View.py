@@ -223,39 +223,42 @@ class SessionFrame(tk.Frame):
 
 class CreateDFrame(tk.Frame):
     def __init__(self, master):
-        tk.Frame.__init__(self, master)
+        tk.Frame.__init__(self, master, bg="#17223b")
         self.user_controller = Controller(modal)
         self.master.title("Criar Despesa")
         self.master.resizable(False, False)
         self.verificar_numero = (self.register(self.verificar_numero))
         self.selected_date = None
 
-        self.categoria_label = tk.Label(self, text="Categoria*:")
+        self.categoria_label = tk.Label(self, text="Categoria*:", font=("Comic Sans MS", 14), bg="#17223b", fg="#ffa200")
         self.categoria_label.grid(row=0, column=0)
         self.categoria_combo = ttk.Combobox(self, values=self.user_controller.get_all_category_names(),
                                             state='readonly')
         self.categoria_combo.current(0)
         self.categoria_combo.grid(row=0, column=1)
 
-        self.valor_label = tk.Label(self, text="Valor*:")
+        self.valor_label = tk.Label(self, text="Valor*:", font=("Comic Sans MS", 14), bg="#17223b", fg="#ffa200")
         self.valor_label.grid(row=1, column=0)
-        self.valor_entry = tk.Entry(self, validate='key', validatecommand=(self.verificar_numero, '%P'))
+        self.valor_entry = tk.Entry(self, validate='key', bg="#6b778d", fg="#17223b", validatecommand=(self.verificar_numero, '%P'))
         self.valor_entry.grid(row=1, column=1)
 
-        self.data_label = tk.Label(self, text="Data*:")
+        self.data_label = tk.Label(self, text="Data*:", font=("Comic Sans MS", 14), bg="#17223b", fg="#ffa200")
         self.data_label.grid(row=2, column=0)
-        self.calendar = Calendar(self, selectmode='day', date_pattern='yyyy-mm-dd')
+        self.calendar = Calendar(self, bg="#6b778d", fg="#17223b", selectmode='day', date_pattern='yyyy-mm-dd')
         self.calendar.grid(row=2, column=1)
 
-        self.descricao_label = tk.Label(self, text="Descrição:")
+        self.descricao_label = tk.Label(self, text="Descrição:", font=("Comic Sans MS", 14), bg="#17223b",
+                             fg="#ffa200")
         self.descricao_label.grid(row=3, column=0)
-        self.descricao_entry = tk.Text(self, width=30, height=5)
+        self.descricao_entry = tk.Text(self, bg="#6b778d", fg="#17223b", width=30, height=5)
         self.descricao_entry.grid(row=3, column=1)
 
-        self.registar = tk.Button(self, text="Registar Despesa", command=self.criar_despesa)
+        self.registar = tk.Button(self, text="Registar Despesa", font=("Comic Sans MS", 12), bg="#6b778d",
+                                      fg="#17223b", command=self.criar_despesa)
         self.registar.grid(row=4, column=1)
 
-        self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame))
+        self.retroceder = tk.Button(self, text="Voltar", font=("Comic Sans MS", 12), bg="#6b778d",
+                                      fg="#17223b", command=lambda: master.switch_frame(SessionFrame))
         self.retroceder.grid(row=4, column=0)
 
     # A cada click vai validar se o que o User pos se dá para converter para float
@@ -291,7 +294,7 @@ class CreateDFrame(tk.Frame):
 
 class VerDFrame(tk.Frame):
     def __init__(self, master):
-        tk.Frame.__init__(self, master)
+        tk.Frame.__init__(self, master, bg="#17223b")
         self.master.title("Ver Despesa")
         self.filters = {}
         self.master.resizable(False, False)
@@ -299,9 +302,12 @@ class VerDFrame(tk.Frame):
 
         self.preencher_tabela()
 
+        self.cor_tabela = ttk.Style(self)
+        self.cor_tabela.configure("Treeview.Heading", background="#6b778d", foreground="#17223b", font=("Comic Sans MS", 10))
+        self.cor_tabela.configure("Treeview", background="#6b778d", foreground="#17223b", font=("Comic Sans MS", 10))
         self.tabela = ttk.Treeview(self, columns=["category", "description", "value", "timestamp"],
-                                   show='headings', selectmode='browse')
-
+                                   show='headings', selectmode='browse', style="Treeview")
+        
         self.tabela.heading("category", text="Category", command=lambda: self.tabela_header_click_asc("category"))
         self.tabela.heading("description", text="Description",
                             command=lambda: self.tabela_header_click_asc("description"))
@@ -313,23 +319,28 @@ class VerDFrame(tk.Frame):
 
         self.tabela.grid(row=0, column=0, columnspan=2)
 
-        self.categoria_label = tk.Label(self, text="Categoria:").grid(row=1, column=0, sticky='w')
+        self.categoria_label = tk.Label(self,text="Categoria:", font=("Comic Sans MS", 14), bg="#17223b",
+                             fg="#ffa200").grid(row=1, column=0, sticky='w')
         self.categoria_filtrar = ttk.Combobox(self, values=self.controller.get_all_category_names(), state='readonly')
         self.categoria_filtrar.current(0)
         self.categoria_filtrar.grid(row=1, column=0, sticky='s')
 
-        self.value_min = tk.Label(self, text="Valor Mínimo:").grid(row=2, column=0, sticky='w')
-        self.value_min = ttk.Entry(self)
+        self.value_min = tk.Label(self, text="Valor Mínimo:", font=("Comic Sans MS", 14), bg="#17223b",
+                             fg="#ffa200").grid(row=2, column=0, sticky='w')
+        self.value_min = tk.Entry(self, bg="#6b778d", fg="#17223b")
         self.value_min.grid(row=2, column=0, sticky='s')
 
-        self.value_max = tk.Label(self, text="Valor Máximo:").grid(row=3, column=0, sticky='w')
-        self.value_max = ttk.Entry(self)
+        self.value_max = tk.Label(self, text="Valor Máximo:", font=("Comic Sans MS", 14), bg="#17223b",
+                             fg="#ffa200").grid(row=3, column=0, sticky='w')
+        self.value_max = tk.Entry(self, bg="#6b778d", fg="#17223b")
         self.value_max.grid(row=3, column=0, sticky='s')
 
-        self.butao_filtrar = tk.Button(self, text="Filtrar", command=self.filtrar)
+        self.butao_filtrar = tk.Button(self, text="Filtrar", font=("Comic Sans MS", 12), bg="#6b778d",
+                                      fg="#17223b", command=self.filtrar)
         self.butao_filtrar.grid(row=4, column=1)
 
-        self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).grid(
+        self.retroceder = tk.Button(self, text="Voltar", font=("Comic Sans MS", 12), bg="#6b778d",
+                                      fg="#17223b", command=lambda: master.switch_frame(SessionFrame)).grid(
             column=1, row=6, sticky='s')
 
     def filtrar(self):
@@ -385,18 +396,18 @@ class VerDFrame(tk.Frame):
                      str(datetime.fromtimestamp(data.get_timestamp()))])
                 node = node.get_node()
 
-    def tabela_header_click_asc(self, column):
-        lista_ordernar_asc = [(self.tabela.set(dados, column), dados) for dados in self.tabela.get_children('')]
+    def tabela_header_click_asc(self, coluna):
+        lista_ordernar_asc = [(self.tabela.set(dados, coluna), dados) for dados in self.tabela.get_children('')]
         lista_ordernar_asc.sort(key=lambda x: x[0])
 
         # Reorganizar as linhas na Treeview
         for index, (value, dados) in enumerate(lista_ordernar_asc):
             self.tabela.move(dados, "", index)
-        self.tabela.heading(column, command=lambda: self.tabela_header_click_desc(column))
+        self.tabela.heading(coluna, command=lambda: self.tabela_header_click_desc(coluna))
 
-    def tabela_header_click_desc(self, column):
+    def tabela_header_click_desc(self, coluna):
         # Obter os dados da Treeview
-        lista_ordernar_desc = [(self.tabela.set(dados, column), dados) for dados in self.tabela.get_children("")]
+        lista_ordernar_desc = [(self.tabela.set(dados, coluna), dados) for dados in self.tabela.get_children("")]
 
         # Classificar os dados em ordem reversa com base na coluna selecionada
         lista_ordernar_desc.sort(key=lambda x: x[0], reverse=True)
@@ -405,29 +416,39 @@ class VerDFrame(tk.Frame):
         for index, (value, dados) in enumerate(lista_ordernar_desc):
             self.tabela.move(dados, "", index)
 
-        self.tabela.heading(column, command=lambda: self.tabela_header_click_normal(column))
+        self.tabela.heading(coluna, command=lambda: self.tabela_header_click_normal(coluna))
 
-    def tabela_header_click_normal(self, column):
-        expenses = self.controller.get_expenses_filtered(user=modal.get_current_user())
-        for item in self.tabela.get_children():
-            self.tabela.delete(item)
-        rows = []
-
-        node = expenses.get_first()
-
-        while node is not None:
-            data: Expense = node.get_data()
-
-            rows.append(
-                [data.get_category().get_name(), data.get_description(), f"{str(data.get_value())}€",
-                 str(datetime.fromtimestamp(data.get_timestamp()))])
-            node = node.get_node()
-
-        for row in rows:
-            self.tabela.insert('', tk.END, values=row)
-
+    def tabela_header_click_normal(self, coluna):
+        self.filtrar()
         # Alternar a direção da classificação ao clicar novamente no header
-        self.tabela.heading(column, command=lambda: self.tabela_header_click_asc(column))
+        self.tabela.heading(coluna, command=lambda: self.tabela_header_click_asc(coluna))
+
+
+class AtualizarSaldoFrame(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self, master)
+        self.master.title("Atualizar Saldo")
+        self.filters = {}
+        self.master.resizable(False, False)
+        self.controller = Controller(modal)
+
+        self.saldo = tk.Label(self, text="Saldo").grid(row=2, column=0, sticky='w')
+        self.saldo = ttk.Entry(self)
+        self.saldo.grid(row=2, column=0, sticky='s')
+
+        self.butao_filtrar = tk.Button(self, text="Atualizar", command=self.atualizar)
+        self.butao_filtrar.grid(row=3, column=0)
+
+        self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).grid(
+            column=0, row=4, sticky='s')
+
+    def atualizar(self):
+        saldo = self.saldo.get()
+        if saldo.isnumeric():
+            self.controller.get_modal().get_current_user().set_balance(int(saldo))
+            showinfo('Sucesso', 'Saldo Atualizado com sucesso')
+        else:
+            showerror('Erro', 'Saldo Inválido')
 
 
 class AtualizarSaldoFrame(tk.Frame):
