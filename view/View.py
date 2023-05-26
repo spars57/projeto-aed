@@ -38,26 +38,9 @@ class MainFrame(tk.Frame):
         self.master.title('Iniciar Sessão')
         self.controller = Controller(modal)
 
-        self.controller.create_user("a", "1", 229156347)
-        self.controller.create_user("b", "2", 229156347)
-        self.controller.get_modal().get_user_list().get_user_by_username("a").set_balance(5000)
-
-        for item in ['Casa', 'Passe', 'Alimentação', 'Roupa', 'Outros']:
-            controller.create_category(item)
-
         self.controller.get_modal().set_current_user(controller.get_user_by_username("a"))
 
-        self.controller.create_expense(category=controller.get_category_by_name("Roupa"), value=100, timestamp=0)
-        self.controller.create_expense(category=controller.get_category_by_name("Outros"), value=200, timestamp=5)
-        self.controller.create_expense(category=controller.get_category_by_name("Casa"), value=300, timestamp=10)
-
-        self.controller.create_expense(category=controller.get_category_by_name("Roupa"), value=400, timestamp=20)
-        self.controller.create_expense(category=controller.get_category_by_name("Outros"), value=500, timestamp=30)
-        self.controller.create_expense(category=controller.get_category_by_name("Casa"), value=600, timestamp=40)
-
-        self.controller.create_expense(category=controller.get_category_by_name("Roupa"), value=700, timestamp=50)
-        self.controller.create_expense(category=controller.get_category_by_name("Outros"), value=800, timestamp=100)
-        self.controller.create_expense(category=controller.get_category_by_name("Casa"), value=900, timestamp=200)
+        self.controller.get_modal().load_to_json()
 
         self.welc = tk.Label(self, text="Bem Vindo ao Gestor de Despesas", font=("Comic Sans MS", 14), bg="#17223b",
                              fg="#ffa200")
@@ -89,8 +72,12 @@ class MainFrame(tk.Frame):
         self.create_button.grid(row=5, column=1)
 
         self.exit = tk.Button(self, text="Sair", font=("Comic Sans MS", 10), bg="#6b778d", fg="#17223b",
-                              command=lambda: self.master.destroy())
+                              command=lambda: self.sair())
         self.exit.grid(row=5, column=0)
+
+    def sair(self):
+        modal.save_to_json()
+        self.master.destroy()
 
     def login(self):
         user = self.user_entry.get()
@@ -230,7 +217,8 @@ class CreateDFrame(tk.Frame):
         self.verificar_numero = (self.register(self.verificar_numero))
         self.selected_date = None
 
-        self.categoria_label = tk.Label(self, text="Categoria*:", font=("Comic Sans MS", 14), bg="#17223b", fg="#ffa200")
+        self.categoria_label = tk.Label(self, text="Categoria*:", font=("Comic Sans MS", 14), bg="#17223b",
+                                        fg="#ffa200")
         self.categoria_label.grid(row=0, column=0)
         self.categoria_combo = ttk.Combobox(self, values=self.user_controller.get_all_category_names(),
                                             state='readonly')
@@ -239,7 +227,8 @@ class CreateDFrame(tk.Frame):
 
         self.valor_label = tk.Label(self, text="Valor*:", font=("Comic Sans MS", 14), bg="#17223b", fg="#ffa200")
         self.valor_label.grid(row=1, column=0)
-        self.valor_entry = tk.Entry(self, validate='key', bg="#6b778d", fg="#17223b", validatecommand=(self.verificar_numero, '%P'))
+        self.valor_entry = tk.Entry(self, validate='key', bg="#6b778d", fg="#17223b",
+                                    validatecommand=(self.verificar_numero, '%P'))
         self.valor_entry.grid(row=1, column=1)
 
         self.data_label = tk.Label(self, text="Data*:", font=("Comic Sans MS", 14), bg="#17223b", fg="#ffa200")
@@ -248,17 +237,17 @@ class CreateDFrame(tk.Frame):
         self.calendar.grid(row=2, column=1)
 
         self.descricao_label = tk.Label(self, text="Descrição:", font=("Comic Sans MS", 14), bg="#17223b",
-                             fg="#ffa200")
+                                        fg="#ffa200")
         self.descricao_label.grid(row=3, column=0)
         self.descricao_entry = tk.Text(self, bg="#6b778d", fg="#17223b", width=30, height=5)
         self.descricao_entry.grid(row=3, column=1)
 
         self.registar = tk.Button(self, text="Registar Despesa", font=("Comic Sans MS", 12), bg="#6b778d",
-                                      fg="#17223b", command=self.criar_despesa)
+                                  fg="#17223b", command=self.criar_despesa)
         self.registar.grid(row=4, column=1)
 
         self.retroceder = tk.Button(self, text="Voltar", font=("Comic Sans MS", 12), bg="#6b778d",
-                                      fg="#17223b", command=lambda: master.switch_frame(SessionFrame))
+                                    fg="#17223b", command=lambda: master.switch_frame(SessionFrame))
         self.retroceder.grid(row=4, column=0)
 
     # A cada click vai validar se o que o User pos se dá para converter para float
@@ -303,11 +292,12 @@ class VerDFrame(tk.Frame):
         self.preencher_tabela()
 
         self.cor_tabela = ttk.Style(self)
-        self.cor_tabela.configure("Treeview.Heading", background="#6b778d", foreground="#17223b", font=("Comic Sans MS", 10))
+        self.cor_tabela.configure("Treeview.Heading", background="#6b778d", foreground="#17223b",
+                                  font=("Comic Sans MS", 10))
         self.cor_tabela.configure("Treeview", background="#6b778d", foreground="#17223b", font=("Comic Sans MS", 10))
         self.tabela = ttk.Treeview(self, columns=["category", "description", "value", "timestamp"],
                                    show='headings', selectmode='browse', style="Treeview")
-        
+
         self.tabela.heading("category", text="Category", command=lambda: self.tabela_header_click_asc("category"))
         self.tabela.heading("description", text="Description",
                             command=lambda: self.tabela_header_click_asc("description"))
@@ -319,38 +309,37 @@ class VerDFrame(tk.Frame):
 
         self.tabela.grid(row=0, column=0, columnspan=2)
 
-        self.categoria_label = tk.Label(self,text="Categoria:", font=("Comic Sans MS", 14), bg="#17223b",
-                             fg="#ffa200").grid(row=1, column=0, sticky='w')
+        self.categoria_label = tk.Label(self, text="Categoria:", font=("Comic Sans MS", 14), bg="#17223b",
+                                        fg="#ffa200").grid(row=1, column=0, sticky='w')
         self.categoria_filtrar = ttk.Combobox(self, values=self.controller.get_all_category_names(), state='readonly')
         self.categoria_filtrar.grid(row=1, column=0, sticky='s')
 
         self.value_min = tk.Label(self, text="Valor Mínimo:", font=("Comic Sans MS", 14), bg="#17223b",
-                             fg="#ffa200").grid(row=2, column=0, sticky='w')
+                                  fg="#ffa200").grid(row=2, column=0, sticky='w')
         self.value_min = tk.Entry(self, bg="#6b778d", fg="#17223b")
         self.value_min.grid(row=2, column=0, sticky='s')
 
         self.value_max = tk.Label(self, text="Valor Máximo:", font=("Comic Sans MS", 14), bg="#17223b",
-                             fg="#ffa200").grid(row=3, column=0, sticky='w')
+                                  fg="#ffa200").grid(row=3, column=0, sticky='w')
         self.value_max = tk.Entry(self, bg="#6b778d", fg="#17223b")
         self.value_max.grid(row=3, column=0, sticky='s')
 
         self.date_min = tk.Label(self, text="Data Minima:", font=("Comic Sans MS", 14), bg="#17223b",
-                             fg="#ffa200").grid(row=4, column=0, sticky='w')
-        self.data_min = DateEntry(self, width= 16, foreground= "white",bd=2,dateformat=4,date_pattern='YYYY-MM-DD')
+                                 fg="#ffa200").grid(row=4, column=0, sticky='w')
+        self.data_min = DateEntry(self, width=16, foreground="white", bd=2, dateformat=4, date_pattern='YYYY-MM-DD')
         self.data_min.grid(row=4, column=0)
 
         self.data_max = tk.Label(self, text="Data Maxima:", font=("Comic Sans MS", 14), bg="#17223b",
-                             fg="#ffa200").grid(row=5, column=0, sticky='w')
-        self.data_max = DateEntry(self, width= 16, foreground= "white",bd=2,dateformat=4,date_pattern='YYYY-MM-DD')
+                                 fg="#ffa200").grid(row=5, column=0, sticky='w')
+        self.data_max = DateEntry(self, width=16, foreground="white", bd=2, dateformat=4, date_pattern='YYYY-MM-DD')
         self.data_max.grid(row=5, column=0)
-        
 
         self.butao_filtrar = tk.Button(self, text="Filtrar", font=("Comic Sans MS", 12), bg="#6b778d",
-                                      fg="#17223b", command=self.filtrar)
+                                       fg="#17223b", command=self.filtrar)
         self.butao_filtrar.grid(row=7, column=0, sticky='w')
 
         self.retroceder = tk.Button(self, text="Voltar", font=("Comic Sans MS", 12), bg="#6b778d",
-                                      fg="#17223b", command=lambda: master.switch_frame(SessionFrame)).grid(
+                                    fg="#17223b", command=lambda: master.switch_frame(SessionFrame)).grid(
             column=0, row=8, sticky='e')
 
     def filtrar(self):
@@ -362,8 +351,8 @@ class VerDFrame(tk.Frame):
         value_maximum = int(self.value_max.get()) if self.value_max.get() != "" else None
 
         if self.data_min.get_date() < self.data_max.get_date():
-            date_minimum = self.data_min.get_date() 
-            date_maximum= self.data_max.get_date() 
+            date_minimum = self.data_min.get_date()
+            date_maximum = self.data_max.get_date()
 
             date_minimum = calendar.timegm(date_minimum.timetuple())
 
@@ -375,7 +364,7 @@ class VerDFrame(tk.Frame):
             value_minimum=value_minimum,
             value_maximum=value_maximum,
             timestamp_minimum=date_minimum,
-            timestamp_maximum=date_maximum 
+            timestamp_maximum=date_maximum
         )
 
         if expenses is None:

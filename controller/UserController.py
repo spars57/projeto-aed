@@ -11,7 +11,9 @@ class UserController:
 
     def login(self, username: str, password: str) -> bool:
         user = self.__modal.get_user_list().get_user_by_username(username)
-        if user.get_password() == encrypt(password):
+        password_e = encrypt(password)
+
+        if user.get_password() == password_e:
             self.__modal.set_current_user(user)
             return True
         else:
