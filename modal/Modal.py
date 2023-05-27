@@ -3,6 +3,7 @@ import json
 from classes.BudgetList import BudgetList
 from classes.Category import Category
 from classes.CategoryList import CategoryList
+from classes.Expense import Expense
 from classes.ExpenseList import ExpenseList
 from classes.User import User
 from classes.UserList import UserList
@@ -43,7 +44,8 @@ class Modal:
         aux = {}
 
         while first_category is not None:
-            categories.append(first_category.get_data().get_name())
+            if first_category.get_data().get_name() not in categories:
+                categories.append(first_category.get_data().get_name())
             first_category = first_category.get_node()
 
         aux['categories'] = categories
@@ -89,6 +91,11 @@ class Modal:
 
         categories = aux['categories']
 
+        for category in categories:
+            self.get_category_list().insert_first(Category(
+                name=category,
+            ))
+
         for key in aux.keys():
             if key != 'categories':
                 u = User(
@@ -101,9 +108,18 @@ class Modal:
 
                 self.get_user_list().insert_first(u)
 
-        for category in categories:
-            self.get_category_list().insert_first(Category(
-                name=category,
-            ))
+                expenses = aux[key]['expenses']
 
-        return self
+                for expense in expenses:
+                    category = self.get_category_list().get_category_by_name(expense['category'])
+                    user = self.get_user_list().get_user_by_username(u.get_username())
+
+                    new_expense = Expense(
+                        user=user,
+                        category=category,
+                        value=expense['value'],
+                        description=expense['description'],
+                        timestamp=expense['timestamp']
+                    )
+
+                    self.get_expense_list().insert_first(new_expense)

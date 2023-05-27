@@ -1,25 +1,33 @@
 {
   "categories": [
-    "Outros",
-    "Roupa",
-    "Alimenta\u00e7\u00e3o",
+    "Renda",
     "Passe",
-    "Casa"
+    "Alimenta\u00e7\u00e3o",
+    "Roupa",
+    "Outros"
   ],
+  "a": {
+    "id": "1703b912-54f6-4990-b79c-ba0e36789f16",
+    "username": "a",
+    "password": "b'$2b$12$KgoByXTnp0hVy2DR1l17HeDHv0vag/a7BJOtaOwjKbG5XSbSB2/rS'",
+    "balance": 9600.0,
+    "nif": 254799221,
+    "expenses": [
+      {
+        "id": "e7af31d7-20f8-4699-93c1-c55231552105",
+        "category": "Renda",
+        "description": "Renda",
+        "value": 400.0,
+        "timestamp": 1685145600
+      }
+    ]
+  },
   "b": {
-    "id": "d55185f9-213a-47c3-b41d-457d2cde66d8",
+    "id": "57453f85-5d18-49c2-b730-cffbb02283d8",
     "username": "b",
     "password": "b'$2b$12$KgoByXTnp0hVy2DR1l17He/yr17LZBP3xBBrZCirubsFn.EfnLXvm'",
     "balance": 0,
     "nif": 229156347,
-    "expenses": []
-  },
-  "a": {
-    "id": "747933d8-e60f-4854-8524-3a12be09ff35",
-    "username": "a",
-    "password": "b'$2b$12$KgoByXTnp0hVy2DR1l17HeDHv0vag/a7BJOtaOwjKbG5XSbSB2/rS'",
-    "balance": 0,
-    "nif": 254799221,
     "expenses": []
   }
 }
