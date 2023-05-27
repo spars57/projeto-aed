@@ -86,8 +86,154 @@ class VerDFrame(tk.Frame):
         self.master.title("Ver Despesa")
         self.master.geometry("300x100")
 
+<<<<<<< Updated upstream
         self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).pack()
     
+=======
+        
+
+        self.cor_tabela = ttk.Style(self)
+        self.cor_tabela.configure("Treeview.Heading", background="#6b778d", foreground="#17223b",
+                                  font=("Comic Sans MS", 10))
+        self.cor_tabela.configure("Treeview", background="#6b778d", foreground="#17223b", font=("Comic Sans MS", 10))
+        self.tabela = ttk.Treeview(self, columns=["category", "description", "value", "timestamp"],
+                                   show='headings', selectmode='browse', style="Treeview")
+
+        self.tabela.heading("category", text="Category", command=lambda: self.tabela_header_click_asc("category"))
+        self.tabela.heading("description", text="Description",
+                            command=lambda: self.tabela_header_click_asc("description"))
+        self.tabela.heading("value", text="Value", command=lambda: self.tabela_header_click_asc("value"))
+        self.tabela.heading("timestamp", text="Date", command=lambda: self.tabela_header_click_asc("timestamp"))
+
+        self.preencher_tabela()
+
+        self.tabela.grid(row=0, column=0, columnspan=2)
+
+        self.categoria_label = tk.Label(self, text="Categoria:", font=("Comic Sans MS", 14), bg="#17223b",
+                                        fg="#ffa200").grid(row=1, column=0, sticky='w')
+        self.categoria_filtrar = ttk.Combobox(self, values=self.controller.get_all_category_names(), state='readonly')
+        self.categoria_filtrar.grid(row=1, column=0, sticky='s')
+
+        self.value_min = tk.Label(self, text="Valor Mínimo:", font=("Comic Sans MS", 14), bg="#17223b",
+                                  fg="#ffa200").grid(row=2, column=0, sticky='w')
+        self.value_min = tk.Entry(self, bg="#6b778d", fg="#17223b")
+        self.value_min.grid(row=2, column=0, sticky='s')
+
+        self.value_max = tk.Label(self, text="Valor Máximo:", font=("Comic Sans MS", 14), bg="#17223b",
+                                  fg="#ffa200").grid(row=3, column=0, sticky='w')
+        self.value_max = tk.Entry(self, bg="#6b778d", fg="#17223b")
+        self.value_max.grid(row=3, column=0, sticky='s')
+
+        self.date_min = tk.Label(self, text="Data Minima:", font=("Comic Sans MS", 14), bg="#17223b",
+                                 fg="#ffa200").grid(row=4, column=0, sticky='w')
+        self.data_min = DateEntry(self, width=16, foreground="white", bd=2, dateformat=4, date_pattern='YYYY-MM-DD')
+        self.data_min.grid(row=4, column=0)
+
+        self.data_max = tk.Label(self, text="Data Maxima:", font=("Comic Sans MS", 14), bg="#17223b",
+                                 fg="#ffa200").grid(row=5, column=0, sticky='w')
+        self.data_max = DateEntry(self, width=16, foreground="white", bd=2, dateformat=4, date_pattern='YYYY-MM-DD')
+        self.data_max.grid(row=5, column=0)
+
+        self.butao_filtrar = tk.Button(self, text="Filtrar", font=("Comic Sans MS", 12), bg="#6b778d",
+                                       fg="#17223b", command=self.filtrar)
+        self.butao_filtrar.grid(row=7, column=0, sticky='w')
+
+        self.retroceder = tk.Button(self, text="Voltar", font=("Comic Sans MS", 12), bg="#6b778d",
+                                    fg="#17223b", command=lambda: master.switch_frame(SessionFrame)).grid(
+            column=0, row=8, sticky='e')
+
+    def filtrar(self):
+        category_name = self.categoria_filtrar.get() if self.categoria_filtrar.get() != "" else None
+        category = self.controller.get_category_by_name(category_name)
+        categories = []
+        categories.append(category)
+        value_minimum = int(self.value_min.get()) if self.value_min.get() != "" else None
+        value_maximum = int(self.value_max.get()) if self.value_max.get() != "" else None
+
+        if self.data_min.get_date() < self.data_max.get_date():
+            date_minimum = self.data_min.get_date()
+            date_maximum = self.data_max.get_date()
+
+            date_minimum = calendar.timegm(date_minimum.timetuple())
+
+            date_maximum = calendar.timegm(date_maximum.timetuple())
+
+        expenses = self.controller.get_expenses_filtered(
+            user=modal.get_current_user(),
+            categories=categories,
+            value_minimum=value_minimum,
+            value_maximum=value_maximum,
+            timestamp_minimum=date_minimum,
+            timestamp_maximum=date_maximum
+        )
+
+        if expenses is None:
+            showerror('Error', 'Sem despesas para mostrar')
+        else:
+            ## clear all table rows
+            for i in self.tabela.get_children():
+                self.tabela.delete(i)
+
+            TABLE_ROWS = []
+
+            node = expenses.get_first()
+
+            while node is not None:
+                data: Expense = node.get_data()
+
+                TABLE_ROWS.append(
+                    [data.get_category().get_name(), data.get_description(), f"{str(data.get_value())}€",
+                     str(datetime.fromtimestamp(data.get_timestamp()))])
+                node = node.get_node()
+
+            for row in TABLE_ROWS:
+                self.tabela.insert('', tk.END, values=row)
+
+    def preencher_tabela(self):
+        expenses = self.controller.get_expenses_filtered(user=modal.get_current_user())
+
+        if expenses is None:
+            showerror('Error', 'Sem despesas para mostrar')
+        else:
+            node = expenses.get_first()
+
+            while node is not None:
+                data: Expense = node.get_data()
+
+                self.tabela.insert("", "end",text=data.get_id(),values=      
+                    (data.get_category().get_name(), 
+                      data.get_description(), 
+                      f"{str(data.get_value())}€",
+                     str(datetime.fromtimestamp(data.get_timestamp()))))
+                node = node.get_node()
+
+    def tabela_header_click_asc(self, coluna):
+        lista_ordernar_asc = [(self.tabela.set(dados, coluna), dados) for dados in self.tabela.get_children('')]
+        lista_ordernar_asc.sort(key=lambda x: x[0])
+
+        # Reorganizar as linhas na Treeview
+        for index, (value, dados) in enumerate(lista_ordernar_asc):
+            self.tabela.move(dados, "", index)
+        self.tabela.heading(coluna, command=lambda: self.tabela_header_click_desc(coluna))
+
+    def tabela_header_click_desc(self, coluna):
+        # Obter os dados da Treeview
+        lista_ordernar_desc = [(self.tabela.set(dados, coluna), dados) for dados in self.tabela.get_children("")]
+
+        # Classificar os dados em ordem reversa com base na coluna selecionada
+        lista_ordernar_desc.sort(key=lambda x: x[0], reverse=True)
+
+        # Reorganizar as linhas na Treeview
+        for index, (value, dados) in enumerate(lista_ordernar_desc):
+            self.tabela.move(dados, "", index)
+
+        self.tabela.heading(coluna, command=lambda: self.tabela_header_click_normal(coluna))
+
+    def tabela_header_click_normal(self, coluna):
+        self.filtrar()
+        # Alternar a direção da classificação ao clicar novamente no header
+        self.tabela.heading(coluna, command=lambda: self.tabela_header_click_asc(coluna))
+>>>>>>> Stashed changes
 
 
 if __name__ == "__main__":
