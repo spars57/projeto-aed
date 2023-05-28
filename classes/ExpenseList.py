@@ -14,50 +14,72 @@ class ExpenseList(LinkedList[Expense]):
             categories: list[Category] = None,
             timestamp_minimum: int = None,
             timestamp_maximum: int = None,
-            value_order: str = None,
             value_minimum: int = None,
             value_maximum: int = None,
             description: str = None
     ) -> LinkedList | None:
-        expenses_list: list[Expense] = []
         final_list = LinkedList[Expense]()
-        node = self.get_first()
-
-        for index in range(self.size()):
-            if node is not None:
-                expenses_list.append(node.get_data())
-            node = node.get_node()
 
         if user is not None:
-            expenses_list = [expense for expense in expenses_list if expense.get_user().get_id() == user.get_id()]
+            first_node = self.get_first()
+            final_list.clear()
+            while first_node is not None:
+                if first_node.get_data().get_user().get_id() == user.get_id():
+                    final_list.insert_first(first_node.get_data())
+                first_node = first_node.get_node()
 
         if categories is not None:
-            expenses_list = [expense for category in categories for expense in expenses_list if
-                             expense.get_category().get_id() == category.get_id()]
+            first_node = self.get_first()
+            final_list.clear()
+            while first_node is not None:
+                if first_node.get_data().get_category().get_name() == categories[0].get_name():
+                    final_list.insert_first(first_node.get_data())
+                first_node = first_node.get_node()
 
         if description is not None:
-            expenses_list = [expense for expense in expenses_list if description in expense.get_description()]
+            first_node = final_list.get_first()
+            final_list.clear()
+
+            while first_node is not None:
+                if first_node.get_data().get_description() == description:
+                    final_list.insert_first(first_node.get_data())
+                first_node = first_node.get_node()
 
         if timestamp_minimum is not None:
-            expenses_list = [expense for expense in expenses_list if expense.get_timestamp() >= timestamp_minimum]
+            first_node = final_list.get_first()
+            final_list.clear()
+
+            while first_node is not None:
+                if first_node.get_data().get_timestamp() >= timestamp_minimum:
+                    final_list.insert_first(first_node.get_data())
+                first_node = first_node.get_node()
 
         if timestamp_maximum is not None:
-            expenses_list = [expense for expense in expenses_list if expense.get_timestamp() <= timestamp_maximum]
+            first_node = final_list.get_first()
+            final_list.clear()
+
+            while first_node is not None:
+                if first_node.get_data().get_timestamp() <= timestamp_maximum:
+                    final_list.insert_first(first_node.get_data())
+                first_node = first_node.get_node()
 
         if value_minimum is not None:
-            expenses_list = [expense for expense in expenses_list if expense.get_value() >= value_minimum]
+            first_node = final_list.get_first()
+            final_list.clear()
+
+            while first_node is not None:
+                if first_node.get_data().get_value() >= value_minimum:
+                    final_list.insert_first(first_node.get_data())
+                first_node = first_node.get_node()
 
         if value_maximum is not None:
-            expenses_list = [expense for expense in expenses_list if expense.get_value() <= value_maximum]
+            first_node = final_list.get_first()
+            final_list.clear()
 
-        if value_order is not None:
-            if value_order == "asc":
-                expenses_list = sorted(expenses_list, key=lambda x: x.get_value(), reverse=True)
-            else:
-                expenses_list = sorted(expenses_list, key=lambda x: x.get_value(), reverse=False)
-
-        for expense in expenses_list:
-            final_list.insert_first(expense)
+            while first_node is not None:
+                if first_node.get_data().get_value() <= value_maximum:
+                    final_list.insert_first(first_node.get_data())
+                first_node = first_node.get_node()
 
         if final_list.size() == 0:
             return None

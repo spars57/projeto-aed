@@ -1,6 +1,6 @@
-from classes.Budget import Budget
 from classes.Category import Category
 from classes.Expense import Expense
+from classes.LinkedList import LinkedList
 from classes.Node import Node
 from modal.Modal import Modal
 
@@ -23,11 +23,38 @@ class ExpenseController:
                 timestamp=timestamp
             ))
 
+    def get_suggestions(self) -> LinkedList[Category]:
+        expenses = self.__modal.get_expense_list().get_expenses_filtered(user=self.__modal.get_current_user())
+        final_list = LinkedList[Category]()
+        aux: dict = {}
+
+        if expenses is None:
+            return final_list
+
+        first_node: Node[Expense] = expenses.get_first()
+
+        if first_node is None:
+            return final_list
+
+        while first_node is not None:
+            expense = first_node.get_data()
+            key = expense.get_category().get_name()
+            if key not in aux.keys():
+                aux[key] = 0
+            aux[key] += expense.get_value()
+            first_node = first_node.get_node()
+
+        aux = dict(sorted(aux.items(), key=lambda x: x[1], reverse=True))
+
+        for key in aux.keys():
+            final_list.insert_first(self.__modal.get_category_list().get_category_by_name(key))
+
+        return final_list
+
     def __add_expense(self, expense: Expense) -> str:
         expense_list = self.__modal.get_expense_list()
         user_list = self.__modal.get_user_list()
         category_list = self.__modal.get_category_list()
-        budget_list = self.__modal.get_budget_list().get_budget_by_user(expense.get_user())
 
         if user_list.get_user_by_username(expense.get_user().get_username()) is None:
             return f"Utilizador '{expense.get_user().get_username()}' não registado"
@@ -37,24 +64,6 @@ class ExpenseController:
 
         if float(expense.get_value()) > expense.get_user().get_balance():
             return f"Saldo insuficiente, o seu saldo é {expense.get_user().get_balance()}€ e a operação que tentou efetuar é de {expense.get_value()}€"
-
-        if budget_list is not None:
-            # filter budgets associated with current expense category and matching current time stamp
-            aux: list[Budget] = []
-            node: Node = budget_list.get_first()
-            for i in range(budget_list.size()):
-                if node is not None:
-                    data: Budget = node.get_data()
-                    if data is not None and data.get_category().get_id() == expense.get_category().get_id() and data.get_valid_from() <= expense.get_timestamp() <= data.get_valid_until():
-                        aux.append(data)
-                    node = node.get_node()
-
-            # Remove value from all budgets:
-            for bugdet in aux:
-                final_value = bugdet.get_value() - expense.get_value()
-                if final_value < 0:
-                    return f"O orçamento {bugdet.get_name()} foi ultrapassado"
-                bugdet.set_value(0 if final_value < 0 else final_value)
 
         expense.get_user().set_balance(expense.get_user().get_balance() - float(expense.get_value()))
         expense_list.insert_first(expense)
