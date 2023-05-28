@@ -433,7 +433,7 @@ class VerDFrame(tk.Frame):
                 node = node.get_node()
 
     def tabela_header_click_asc(self, coluna):
-        
+       
         lista_ordernar_asc = [(self.tabela.set(dados, coluna), dados) for dados in self.tabela.get_children('')]
 
         lista_ordernar_asc.sort(key=lambda x: x[0])
