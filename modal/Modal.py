@@ -1,7 +1,6 @@
 import json
-import os
-from typing import IO
 
+from classes.BudgetList import BudgetList
 from classes.Category import Category
 from classes.CategoryList import CategoryList
 from classes.Expense import Expense
@@ -15,6 +14,8 @@ class Modal:
         self.__user_list: UserList = UserList()
         self.__category_list: CategoryList = CategoryList()
         self.__expense_list: ExpenseList = ExpenseList()
+        self.__budget_list: BudgetList = BudgetList()
+        self.__current_user: User = None
 
     def get_user_list(self) -> UserList:
         return self.__user_list
@@ -25,75 +26,100 @@ class Modal:
     def get_expense_list(self) -> ExpenseList:
         return self.__expense_list
 
-    def save_to_file(self, filename: str) -> bool:
-        if not os.path.exists(filename):
-            return False
+    def get_budget_list(self) -> BudgetList:
+        return self.__budget_list
 
-        try:
-            file: IO = open(filename, 'w')
-            users_list = self.get_user_list()
-            category_list = self.get_category_list()
-            expense_list = self.get_expense_list()
+    def set_current_user(self, user: User) -> None:
+        self.__current_user = user
 
-            users = [{
-                "id": user.get_id(),
+    def get_current_user(self) -> User:
+        return self.__current_user
+
+    def save_to_json(self) -> None:
+        first_user = self.get_user_list().get_first()
+        first_category = self.get_category_list().get_first()
+
+        categories = []
+
+        aux = {}
+
+        while first_category is not None:
+            if first_category.get_data().get_name() not in categories:
+                categories.append(first_category.get_data().get_name())
+            first_category = first_category.get_node()
+
+        aux['categories'] = categories
+
+        while first_user is not None:
+            user = first_user.get_data()
+
+            first_expenses = self.get_expense_list().get_first()
+            expense = []
+
+            while first_expenses is not None:
+                exp = first_expenses.get_data()
+
+                if exp.get_user().get_id() == user.get_id():
+                    expense.append({
+                        "id": str(exp.get_id()),
+                        "category": exp.get_category().get_name(),
+                        "description": exp.get_description(),
+                        "value": exp.get_value(),
+                        "timestamp": exp.get_timestamp()
+                    })
+
+                first_expenses = first_expenses.get_node()
+
+            aux[user.get_username()] = {
+                "id": str(user.get_id()),
                 "username": user.get_username(),
                 "password": user.get_password(),
+                "balance": user.get_balance(),
                 "nif": user.get_nif(),
-            } for user in users_list.get()]
-
-            categories = [{
-                "id": category.get_id(),
-                "name": category.get_name(),
-            } for category in category_list.get()]
-
-            expenses = [{
-                "id": expense.get_id(),
-                "user_id": expense.get_user(),
-                "category_id": expense.get_category(),
-                "description": expense.get_description(),
-                "value": expense.get_value(),
-                "timestamp": expense.get_timestamp()
-            } for expense in expense_list.get()]
-
-            final_dict = {
-                "users": users,
-                "categories": categories,
-                "expenses": expenses,
+                "expenses": expense,
             }
 
-            file.write(json.dumps(final_dict))
+            first_user = first_user.get_node()
+
+            file = open("data.json", "w")
+            file.write(json.dumps(aux))
             file.close()
-            return True
-        except FileNotFoundError:
-            return False
 
-    def read_from_file(self, filename: str) -> bool:
-        if not os.path.exists(filename):
-            return False
+    def load_to_json(self) -> None:
+        file = open("data.json", "r")
+        aux: dict = json.loads(file.read())
 
-        try:
-            file: IO = open(filename, 'r')
-            data: any = json.load(file)
+        categories = aux['categories']
 
-            users = data["users"]
-            categories = data["categories"]
-            expenses = data["expenses"]
+        for category in categories:
+            self.get_category_list().insert_first(Category(
+                name=category,
+            ))
 
-            for user in users:
-                self.get_user_list().add(
-                    User(username=user["username"], password=user["password"], nif=user["nif"]).set_id(
-                        user_id=user["id"]))
+        for key in aux.keys():
+            if key != 'categories':
+                u = User(
+                    username=aux[key]['username'],
+                    password=aux[key]['password'],
+                    nif=aux[key]['nif'],
+                )
 
-            for category in categories:
-                self.get_category_list().add(Category(name=category["name"]).set_id(category_id=category["id"]))
+                u.set_balance(aux[key]['balance'])
 
-            for expense in expenses:
-                self.get_expense_list().add(Expense(user_id=expense["user_id"], category_id=expense["category_id"],
-                                                    description=expense["description"], value=expense["value"]).set_id(
-                    expense["id"]).set_timestamp(expense["timestamp"]))
+                self.get_user_list().insert_first(u)
 
-            file.close()
-            return True
-        except FileNotFoundError:
-            return False
+                expenses = aux[key]['expenses']
+
+                for expense in expenses:
+                    category = self.get_category_list().get_category_by_name(expense['category'])
+                    user = self.get_user_list().get_user_by_username(u.get_username())
+
+                    new_expense = Expense(
+                        user=user,
+                        category=category,
+                        value=expense['value'],
+                        description=expense['description'],
+                        timestamp=expense['timestamp']
+                    )
+
+                    self.get_expense_list().insert_first(new_expense)

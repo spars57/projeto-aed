@@ -1,38 +1,40 @@
-from time import time
 from typing import TypeVar
 from uuid import uuid4
 
-TExpense = TypeVar("TExpense", bound="User")
+from classes.Category import Category
+from classes.User import User
+
+TExpense = TypeVar("TExpense", bound="Expense")
 
 
 class Expense:
-    def __init__(self, user_id: str, category_id: str, description: str, value: float) -> None:
-        self.__id: str = str(uuid4())
-        self.__user_id: str = user_id
-        self.__category_id: str = category_id
+    def __init__(self, user: User, category: Category, description: str, value: float, timestamp: float) -> None:
+        self.__id: uuid4 = uuid4()
+        self.__user: User = user
+        self.__category: Category = category
         self.__description: str = description
         self.__value: float = value
-        self.__timestamp: float = time()
+        self.__timestamp: float = timestamp
 
-    def get_id(self) -> str:
+    def get_id(self) -> uuid4:
         return self.__id
 
     def set_id(self, expense_id: str) -> TExpense:
         self.__id = expense_id
         return self
 
-    def get_user(self) -> str:
-        return self.__user_id
+    def get_user(self) -> User:
+        return self.__user
 
-    def set_user(self, user_id: str) -> TExpense:
-        self.__user_id = user_id
+    def set_user(self, user: User) -> TExpense:
+        self.__user = user
         return self
 
-    def get_category(self) -> str:
-        return self.__category_id
+    def get_category(self) -> Category:
+        return self.__category
 
-    def set_category(self, category_id: str) -> TExpense:
-        self.__category_id = category_id
+    def set_category(self, category: Category) -> TExpense:
+        self.__category = category
         return self
 
     def get_value(self) -> float:
@@ -52,6 +54,6 @@ class Expense:
     def get_timestamp(self) -> float:
         return self.__timestamp
 
-    def set_timestamp(self, timestamp: str) -> TExpense:
+    def set_timestamp(self, timestamp: float) -> TExpense:
         self.__timestamp = timestamp
         return self

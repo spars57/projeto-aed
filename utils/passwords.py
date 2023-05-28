@@ -1,6 +1,6 @@
 import bcrypt
 
-salt = bcrypt.gensalt()
+salt = b'$2b$12$KgoByXTnp0hVy2DR1l17He'
 
 
 def encrypt(password: str) -> str:

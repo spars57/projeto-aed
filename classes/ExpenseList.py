@@ -1,44 +1,65 @@
+from classes.Category import Category
 from classes.Expense import Expense
+from classes.LinkedList import LinkedList
+from classes.User import User
 
 
-class ExpenseList:
-    def __init__(self, value: Expense = None) -> None:
-        if value is None:
-            value = []
-        self.__list: list[Expense] = value
+class ExpenseList(LinkedList[Expense]):
+    def __init__(self):
+        LinkedList.__init__(self)
 
-    def add(self, expense: Expense) -> None:
-        self.__list.append(expense)
+    def get_expenses_filtered(
+            self,
+            user: User = None,
+            categories: list[Category] = None,
+            timestamp_minimum: int = None,
+            timestamp_maximum: int = None,
+            value_order: str = None,
+            value_minimum: int = None,
+            value_maximum: int = None,
+            description: str = None
+    ) -> LinkedList | None:
+        expenses_list: list[Expense] = []
+        final_list = LinkedList[Expense]()
+        node = self.get_first()
 
-    def delete_by_expense_id(self, expense_id: str) -> None:
-        self.__list = [expense for expense in self.__list if expense.get_id() != expense_id]
+        for index in range(self.size()):
+            if node is not None:
+                expenses_list.append(node.get_data())
+            node = node.get_node()
 
-    def get(self) -> list[Expense]:
-        return self.__list
+        if user is not None:
+            expenses_list = [expense for expense in expenses_list if expense.get_user().get_id() == user.get_id()]
 
-    def get_by_user_id(self, user_id: str) -> list[Expense]:
-        return [expense for expense in self.__list if expense.get_user() == user_id]
+        if categories is not None:
+            expenses_list = [expense for category in categories for expense in expenses_list if
+                             expense.get_category().get_id() == category.get_id()]
 
-    def get_by_category_id(self, category_id: str) -> list[Expense]:
-        return [expense for expense in self.__list if expense.get_category() == category_id]
+        if description is not None:
+            expenses_list = [expense for expense in expenses_list if description in expense.get_description()]
 
-    def get_by_timestamp(self, timestamp: str) -> list[Expense]:
-        return [expense for expense in self.__list if expense.get_timestamp() == timestamp]
+        if timestamp_minimum is not None:
+            expenses_list = [expense for expense in expenses_list if expense.get_timestamp() >= timestamp_minimum]
 
-    def get_by_timestamp_range(self, timestamp_range: [float, float]) -> list[Expense]:
-        return [expense for expense in self.__list if timestamp_range[0] < expense.get_timestamp() < timestamp_range[1]]
+        if timestamp_maximum is not None:
+            expenses_list = [expense for expense in expenses_list if expense.get_timestamp() <= timestamp_maximum]
 
-    def get_by_value_range(self, value_range: [float, float]) -> list[Expense]:
-        return [expense for expense in self.__list if value_range[0] < expense.get_value() < value_range[1]]
+        if value_minimum is not None:
+            expenses_list = [expense for expense in expenses_list if expense.get_value() >= value_minimum]
 
-    def get_by_expense_id(self, expense_id: str) -> Expense | None:
-        found: list[Expense] = [expense for expense in self.__list if expense.get_id() == expense_id]
-        if len(found) > 0:
-            return found[0]
-        return None
+        if value_maximum is not None:
+            expenses_list = [expense for expense in expenses_list if expense.get_value() <= value_maximum]
 
-    def set(self, value: list[Expense]):
-        self.__list = value
+        if value_order is not None:
+            if value_order == "asc":
+                expenses_list = sorted(expenses_list, key=lambda x: x.get_value(), reverse=True)
+            else:
+                expenses_list = sorted(expenses_list, key=lambda x: x.get_value(), reverse=False)
 
-    def json(self) -> dict:
-        return self.__dict__
+        for expense in expenses_list:
+            final_list.insert_first(expense)
+
+        if final_list.size() == 0:
+            return None
+
+        return final_list

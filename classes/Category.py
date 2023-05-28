@@ -1,15 +1,15 @@
 from typing import TypeVar
 from uuid import uuid4
 
-TCategory = TypeVar("TCategory", bound="User")
+TCategory = TypeVar("TCategory", bound="Category")
 
 
 class Category:
     def __init__(self, name: str):
-        self.__id: str = str(uuid4())
+        self.__id: uuid4 = uuid4()
         self.__name: str = name
 
-    def get_id(self) -> str:
+    def get_id(self) -> uuid4:
         return self.__id
 
     def set_id(self, category_id: str) -> TCategory:
