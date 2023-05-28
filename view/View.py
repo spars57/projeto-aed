@@ -381,13 +381,13 @@ class VerDFrame(tk.Frame):
             while node is not None:
                 data: Expense = node.get_data()
 
-                TABLE_ROWS.append(
-                    [data.get_category().get_name(), data.get_description(), f"{str(data.get_value())}€",
-                     str(datetime.fromtimestamp(data.get_timestamp()))])
+                self.tabela.insert("", "end",text=data.get_id(),values=      
+                    (data.get_category().get_name(), 
+                      data.get_description(), 
+                      f"{str(data.get_value())}€",
+                     str(datetime.fromtimestamp(data.get_timestamp()))))
                 node = node.get_node()
 
-            for row in TABLE_ROWS:
-                self.tabela.insert('', tk.END, values=row)
 
     def preencher_tabela(self):
         expenses = self.controller.get_expenses_filtered(user=modal.get_current_user())
@@ -400,9 +400,11 @@ class VerDFrame(tk.Frame):
             while node is not None:
                 data: Expense = node.get_data()
 
-                TABLE_ROWS.append(
-                    [data.get_category().get_name(), data.get_description(), f"{str(data.get_value())}€",
-                     str(datetime.fromtimestamp(data.get_timestamp()))])
+                self.tabela.insert("", "end",text=data.get_id(),values=      
+                    (data.get_category().get_name(), 
+                      data.get_description(), 
+                      f"{str(data.get_value())}€",
+                     str(datetime.fromtimestamp(data.get_timestamp()))))
                 node = node.get_node()
 
     def tabela_header_click_asc(self, coluna):
@@ -433,32 +435,6 @@ class VerDFrame(tk.Frame):
         self.tabela.heading(coluna, command=lambda: self.tabela_header_click_asc(coluna))
 
 
-class AtualizarSaldoFrame(tk.Frame):
-    def __init__(self, master):
-        tk.Frame.__init__(self, master)
-        self.master.title("Atualizar Saldo")
-        self.filters = {}
-        self.master.resizable(False, False)
-        self.controller = Controller(modal)
-
-        self.saldo = tk.Label(self, text="Saldo").grid(row=2, column=0, sticky='w')
-        self.saldo = ttk.Entry(self)
-        self.saldo.grid(row=2, column=0, sticky='s')
-
-        self.butao_filtrar = tk.Button(self, text="Atualizar", command=self.atualizar)
-        self.butao_filtrar.grid(row=3, column=0)
-
-        self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).grid(
-            column=0, row=4, sticky='s')
-
-    def atualizar(self):
-        saldo = self.saldo.get()
-        if saldo.isnumeric():
-            self.controller.get_modal().get_current_user().set_balance(int(saldo))
-            showinfo('Sucesso', 'Saldo Atualizado com sucesso')
-        else:
-            showerror('Erro', 'Saldo Inválido')
-
 
 class AtualizarSaldoFrame(tk.Frame):
     def __init__(self, master):
@@ -468,15 +444,22 @@ class AtualizarSaldoFrame(tk.Frame):
         self.master.resizable(False, False)
         self.controller = Controller(modal)
 
-        self.saldo = tk.Label(self, text="Saldo").grid(row=2, column=0, sticky='w')
+        self.saldo = tk.Label(self, text="Atualizar Saldo:").grid(row=2, column=0, sticky='w')
         self.saldo = ttk.Entry(self)
-        self.saldo.grid(row=2, column=0, sticky='s')
+        self.saldo.grid(row=2, column=1, sticky='e')
 
-        self.butao_filtrar = tk.Button(self, text="Atualizar", command=self.atualizar)
-        self.butao_filtrar.grid(row=3, column=0)
+        self.saldo_atualizar = tk.Button(self, text="Atualizar", command=self.atualizar)
+        self.saldo_atualizar.grid(row=2, column=3)
+
+        self.limite = tk.Label(self, text="Limite Mensal:").grid(row=4, column=0, sticky='w')
+        self.limite_mensal = ttk.Entry(self)
+        self.limite_mensal.grid(row=4, column=1, sticky='e')
+
+        self.saldo_atualizar = tk.Button(self, text="Adicionar Limite", command=self.limite_mensal())
+        self.saldo_atualizar.grid(row=4, column=3)
 
         self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).grid(
-            column=0, row=4, sticky='s')
+            column=1, row=6, sticky='s')
 
     def atualizar(self):
         saldo = self.saldo.get()
@@ -485,3 +468,4 @@ class AtualizarSaldoFrame(tk.Frame):
             showinfo('Sucesso', 'Saldo Atualizado com sucesso')
         else:
             showerror('Erro', 'Saldo Inválido')
+
