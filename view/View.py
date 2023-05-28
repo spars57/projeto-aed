@@ -166,7 +166,8 @@ class RegisterFrame(tk.Frame):
 
     # Limitar o que o User pode escrever
     def verficar_nif(self, digito):
-        if str.isdigit(digito) or digito == "":
+        if str.isdigit(digito) and len(digito) <= 9:
+            
             return True
         else:
             return False
@@ -335,9 +336,33 @@ class VerDFrame(tk.Frame):
                                        fg="#17223b", command=self.filtrar)
         self.butao_filtrar.grid(row=7, column=0, sticky='w')
 
+        self.sugestao = tk.Label(self, font=("Comic Sans MS", 14), bg="#17223b",
+                                 fg="#ffa200")
+        self.sugestao.grid(row=4, column=1)
+        
+
+        self.butao_sugestao = tk.Button(self, text="Sugestão Financeira", font=("Comic Sans MS", 12), bg="#6b778d",
+                                       fg="#17223b", command=self.f_sugestao)
+        self.butao_sugestao.grid(row=7, column=1)
+
+
         self.retroceder = tk.Button(self, text="Voltar", font=("Comic Sans MS", 12), bg="#6b778d",
                                     fg="#17223b", command=lambda: master.switch_frame(SessionFrame)).grid(
             column=0, row=8, sticky='e')
+        
+    def f_sugestao(self):
+        lista = self.controller.get_suggestions()
+
+        if lista is None:
+            showerror('Error', 'Sem sugestões para mostrar')
+        else:
+            node = lista.get_first()
+            while node is not None:
+                category = node.get_data()
+                node = node.get_node()
+                self.sugestao.config(text='Sugestão: ' + category.get_name())
+
+
 
     def filtrar(self):
         category_name = self.categoria_filtrar.get() if self.categoria_filtrar.get() != "" else None
@@ -354,7 +379,10 @@ class VerDFrame(tk.Frame):
             date_minimum = calendar.timegm(date_minimum.timetuple())
 
             date_maximum = calendar.timegm(date_maximum.timetuple())
-
+        else:
+            date_minimum = None
+            date_maximum = None
+        
         expenses = self.controller.get_expenses_filtered(
             user=modal.get_current_user(),
             categories=categories,
@@ -367,7 +395,6 @@ class VerDFrame(tk.Frame):
         if expenses is None:
             showerror('Error', 'Sem despesas para mostrar')
         else:
-            ## clear all table rows
             for i in self.tabela.get_children():
                 self.tabela.delete(i)
 
@@ -387,6 +414,7 @@ class VerDFrame(tk.Frame):
 
 
     def preencher_tabela(self):
+
         expenses = self.controller.get_expenses_filtered(user=modal.get_current_user())
 
         if expenses is None:
@@ -407,9 +435,9 @@ class VerDFrame(tk.Frame):
     def tabela_header_click_asc(self, coluna):
         
         lista_ordernar_asc = [(self.tabela.set(dados, coluna), dados) for dados in self.tabela.get_children('')]
+
         lista_ordernar_asc.sort(key=lambda x: x[0])
 
-        # Reorganizar as linhas na Treeview
         for index, (value, dados) in enumerate(lista_ordernar_asc):
             self.tabela.move(dados, "", index)
         self.tabela.heading(coluna, command=lambda: self.tabela_header_click_desc(coluna))
@@ -424,12 +452,11 @@ class VerDFrame(tk.Frame):
         # Reorganizar as linhas na Treeview
         for index, (value, dados) in enumerate(lista_ordernar_desc):
             self.tabela.move(dados, "", index)
-
+        # Alternar a direção da classificação ao clicar novamente no header
         self.tabela.heading(coluna, command=lambda: self.tabela_header_click_normal(coluna))
 
     def tabela_header_click_normal(self, coluna):
         self.filtrar()
-        # Alternar a direção da classificação ao clicar novamente no header
         self.tabela.heading(coluna, command=lambda: self.tabela_header_click_asc(coluna))
 
 
