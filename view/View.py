@@ -251,6 +251,7 @@ class CreateDFrame(tk.Frame):
 
     # A cada click vai validar se o que o User pos se dá para converter para float
     def verificar_numero(self, valor):
+        
         try:
             float(valor)
             return True
@@ -262,6 +263,10 @@ class CreateDFrame(tk.Frame):
         valor = self.valor_entry.get()
         data = self.calendar.get_date()
 
+        if categoria == '' or valor == '' or  data == '':
+            showerror('Error', 'Um dos campos que preencheu está vazio')
+            return
+        
         data = data.split("-")
 
         data = datetime(int(data[0]), int(data[1]), int(data[2]))
@@ -398,8 +403,6 @@ class VerDFrame(tk.Frame):
             for i in self.tabela.get_children():
                 self.tabela.delete(i)
 
-            TABLE_ROWS = []
-
             node = expenses.get_first()
 
             while node is not None:
@@ -433,7 +436,6 @@ class VerDFrame(tk.Frame):
                 node = node.get_node()
 
     def tabela_header_click_asc(self, coluna):
-       
         lista_ordernar_asc = [(self.tabela.set(dados, coluna), dados) for dados in self.tabela.get_children('')]
 
         lista_ordernar_asc.sort(key=lambda x: x[0])
@@ -459,6 +461,7 @@ class VerDFrame(tk.Frame):
         self.filtrar()
         self.tabela.heading(coluna, command=lambda: self.tabela_header_click_asc(coluna))
 
+    
 
 
 class AtualizarSaldoFrame(tk.Frame):
@@ -480,7 +483,7 @@ class AtualizarSaldoFrame(tk.Frame):
         self.limite_mensal = ttk.Entry(self)
         self.limite_mensal.grid(row=4, column=1, sticky='e')
 
-        self.saldo_atualizar = tk.Button(self, text="Adicionar Limite", command=self.limite_mensal())
+        self.saldo_atualizar = tk.Button(self, text="Adicionar Limite")
         self.saldo_atualizar.grid(row=4, column=3)
 
         self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).grid(

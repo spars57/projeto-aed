@@ -28,7 +28,7 @@ class ExpenseList(LinkedList[Expense]):
                     final_list.insert_first(first_node.get_data())
                 first_node = first_node.get_node()
 
-        if categories is not None and len(categories) > 0:
+        if categories is not None and len(categories) > 0 and categories[0] is not None:
             first_node = self.get_first()
             final_list.clear()
             while first_node is not None:

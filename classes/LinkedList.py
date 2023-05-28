@@ -43,3 +43,5 @@ class LinkedList(Generic[T]):
     def clear(self) -> None:
         self.__head = None
         self.__size = 0
+
+    
