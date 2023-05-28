@@ -58,5 +58,6 @@ class ExpenseController:
 
         expense.get_user().set_balance(expense.get_user().get_balance() - float(expense.get_value()))
         expense_list.insert_first(expense)
+        self.__modal.save_to_json()
 
         return f"Operação '{expense.get_description()}' registada com sucesso"

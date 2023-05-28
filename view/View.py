@@ -289,7 +289,7 @@ class VerDFrame(tk.Frame):
         self.master.resizable(False, False)
         self.controller = Controller(modal)
 
-        self.preencher_tabela()
+        
 
         self.cor_tabela = ttk.Style(self)
         self.cor_tabela.configure("Treeview.Heading", background="#6b778d", foreground="#17223b",
@@ -304,8 +304,7 @@ class VerDFrame(tk.Frame):
         self.tabela.heading("value", text="Value", command=lambda: self.tabela_header_click_asc("value"))
         self.tabela.heading("timestamp", text="Date", command=lambda: self.tabela_header_click_asc("timestamp"))
 
-        for row in TABLE_ROWS:
-            self.tabela.insert('', tk.END, values=row)
+        self.preencher_tabela()
 
         self.tabela.grid(row=0, column=0, columnspan=2)
 
@@ -408,6 +407,7 @@ class VerDFrame(tk.Frame):
                 node = node.get_node()
 
     def tabela_header_click_asc(self, coluna):
+        
         lista_ordernar_asc = [(self.tabela.set(dados, coluna), dados) for dados in self.tabela.get_children('')]
         lista_ordernar_asc.sort(key=lambda x: x[0])
 
