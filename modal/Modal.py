@@ -1,6 +1,5 @@
 import json
 
-from classes.BudgetList import BudgetList
 from classes.Category import Category
 from classes.CategoryList import CategoryList
 from classes.Expense import Expense
@@ -14,7 +13,6 @@ class Modal:
         self.__user_list: UserList = UserList()
         self.__category_list: CategoryList = CategoryList()
         self.__expense_list: ExpenseList = ExpenseList()
-        self.__budget_list: BudgetList = BudgetList()
         self.__current_user: User = None
 
     def get_user_list(self) -> UserList:
@@ -25,9 +23,6 @@ class Modal:
 
     def get_expense_list(self) -> ExpenseList:
         return self.__expense_list
-
-    def get_budget_list(self) -> BudgetList:
-        return self.__budget_list
 
     def set_current_user(self, user: User) -> None:
         self.__current_user = user
@@ -111,6 +106,7 @@ class Modal:
                 expenses = aux[key]['expenses']
 
                 for expense in expenses:
+                    counter = 0
                     category = self.get_category_list().get_category_by_name(expense['category'])
                     user = self.get_user_list().get_user_by_username(u.get_username())
 
@@ -122,4 +118,21 @@ class Modal:
                         timestamp=expense['timestamp']
                     )
 
-                    self.get_expense_list().insert_first(new_expense)
+                    user_expenses = self.__expense_list.get_expenses_filtered(user=u)
+
+                    if user_expenses is not None:
+                        first_node = user_expenses.get_first()
+
+                        while first_node is not None:
+                            expense: Expense = first_node.get_data()
+
+                            if expense.get_user().get_username() == u.get_username():
+                                if expense.get_value() == new_expense.get_value():
+                                    if expense.get_timestamp() == new_expense.get_timestamp():
+                                        if expense.get_category().get_name() == category.get_name():
+                                            counter = 1
+
+                            first_node = first_node.get_node()
+
+                    if counter == 0:
+                        self.get_expense_list().insert_first(new_expense)

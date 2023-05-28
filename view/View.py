@@ -38,8 +38,6 @@ class MainFrame(tk.Frame):
         self.master.title('Iniciar Sessão')
         self.controller = Controller(modal)
 
-        self.controller.get_modal().set_current_user(controller.get_user_by_username("a"))
-
         self.controller.get_modal().load_to_json()
 
         self.welc = tk.Label(self, text="Bem Vindo ao Gestor de Despesas", font=("Comic Sans MS", 14), bg="#17223b",
