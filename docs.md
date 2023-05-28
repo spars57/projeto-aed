@@ -11,14 +11,12 @@ Criação de Classes:
     create_user(username: str, password: str, nif: int) -> User
     create_expense(user: User, category: Category, value: float, timestamp: int, description: str = "") -> Expense
     create_category(name: str) -> Category
-    create_budget(name: str, user: User, category: Category, value: float, valid_from: float, valid_until: float) -> Budget
 
 Adicionar coisas às respectivas listas:
 
     add_user(user: User) -> str
     add_category(category: Category) -> str
     add_expense(expense: Expense) -> str
-    add_budget(budget: Budget) -> str
 
 Filtragem de Despesas:
 
@@ -48,7 +46,6 @@ Gets:
 Outros:
 
     validate_nif(nif: int) -> bool
-
 
 #### Notas:
 

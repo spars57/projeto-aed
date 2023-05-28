@@ -39,3 +39,7 @@ class LinkedList(Generic[T]):
 
         self.__size += 1
         self.__head = new_node
+
+    def clear(self) -> None:
+        self.__head = None
+        self.__size = 0
