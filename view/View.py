@@ -167,7 +167,7 @@ class RegisterFrame(tk.Frame):
     # Limitar o que o User pode escrever
     def verficar_nif(self, digito):
         if str.isdigit(digito) and len(digito) <= 9:
-            
+
             return True
         else:
             return False
@@ -251,7 +251,7 @@ class CreateDFrame(tk.Frame):
 
     # A cada click vai validar se o que o User pos se dá para converter para float
     def verificar_numero(self, valor):
-        
+
         try:
             float(valor)
             return True
@@ -263,10 +263,10 @@ class CreateDFrame(tk.Frame):
         valor = self.valor_entry.get()
         data = self.calendar.get_date()
 
-        if categoria == '' or valor == '' or  data == '':
+        if categoria == '' or valor == '' or data == '':
             showerror('Error', 'Um dos campos que preencheu está vazio')
             return
-        
+
         data = data.split("-")
 
         data = datetime(int(data[0]), int(data[1]), int(data[2]))
@@ -292,8 +292,6 @@ class VerDFrame(tk.Frame):
         self.filters = {}
         self.master.resizable(False, False)
         self.controller = Controller(modal)
-
-        
 
         self.cor_tabela = ttk.Style(self)
         self.cor_tabela.configure("Treeview.Heading", background="#6b778d", foreground="#17223b",
@@ -344,17 +342,15 @@ class VerDFrame(tk.Frame):
         self.sugestao = tk.Label(self, font=("Comic Sans MS", 14), bg="#17223b",
                                  fg="#ffa200")
         self.sugestao.grid(row=4, column=1)
-        
 
         self.butao_sugestao = tk.Button(self, text="Sugestão Financeira", font=("Comic Sans MS", 12), bg="#6b778d",
-                                       fg="#17223b", command=self.f_sugestao)
+                                        fg="#17223b", command=self.f_sugestao)
         self.butao_sugestao.grid(row=7, column=1)
-
 
         self.retroceder = tk.Button(self, text="Voltar", font=("Comic Sans MS", 12), bg="#6b778d",
                                     fg="#17223b", command=lambda: master.switch_frame(SessionFrame)).grid(
             column=0, row=8, sticky='e')
-        
+
     def f_sugestao(self):
         lista = self.controller.get_suggestions()
 
@@ -366,8 +362,6 @@ class VerDFrame(tk.Frame):
                 category = node.get_data()
                 node = node.get_node()
                 self.sugestao.config(text='Sugestão: ' + category.get_name())
-
-
 
     def filtrar(self):
         category_name = self.categoria_filtrar.get() if self.categoria_filtrar.get() != "" else None
@@ -387,7 +381,7 @@ class VerDFrame(tk.Frame):
         else:
             date_minimum = None
             date_maximum = None
-        
+
         expenses = self.controller.get_expenses_filtered(
             user=modal.get_current_user(),
             categories=categories,
@@ -408,13 +402,12 @@ class VerDFrame(tk.Frame):
             while node is not None:
                 data: Expense = node.get_data()
 
-                self.tabela.insert("", "end",text=data.get_id(),values=      
-                    (data.get_category().get_name(), 
-                      data.get_description(), 
-                      f"{str(data.get_value())}€",
-                     str(datetime.fromtimestamp(data.get_timestamp()))))
+                self.tabela.insert("", "end", text=data.get_id(), values=
+                (data.get_category().get_name(),
+                 data.get_description(),
+                 f"{str(data.get_value())}€",
+                 str(datetime.fromtimestamp(data.get_timestamp()))))
                 node = node.get_node()
-
 
     def preencher_tabela(self):
 
@@ -428,17 +421,20 @@ class VerDFrame(tk.Frame):
             while node is not None:
                 data: Expense = node.get_data()
 
-                self.tabela.insert("", "end",text=data.get_id(),values=      
-                    (data.get_category().get_name(), 
-                      data.get_description(), 
-                      f"{str(data.get_value())}€",
-                     str(datetime.fromtimestamp(data.get_timestamp()))))
+                self.tabela.insert("", "end", text=data.get_id(), values=
+                (data.get_category().get_name(),
+                 data.get_description(),
+                 f"{str(data.get_value())}€",
+                 str(datetime.fromtimestamp(data.get_timestamp()))))
                 node = node.get_node()
 
     def tabela_header_click_asc(self, coluna):
         lista_ordernar_asc = [(self.tabela.set(dados, coluna), dados) for dados in self.tabela.get_children('')]
 
-        lista_ordernar_asc.sort(key=lambda x: x[0])
+        if coluna == "value":
+            lista_ordernar_asc = sorted(lista_ordernar_asc, key=lambda x: float(x[0].replace('€', '')))
+        else:
+            lista_ordernar_asc.sort(key=lambda x: x[0])
 
         for index, (value, dados) in enumerate(lista_ordernar_asc):
             self.tabela.move(dados, "", index)
@@ -449,7 +445,10 @@ class VerDFrame(tk.Frame):
         lista_ordernar_desc = [(self.tabela.set(dados, coluna), dados) for dados in self.tabela.get_children("")]
 
         # Classificar os dados em ordem reversa com base na coluna selecionada
-        lista_ordernar_desc.sort(key=lambda x: x[0], reverse=True)
+        if coluna == "value":
+            lista_ordernar_desc = sorted(lista_ordernar_desc, key=lambda x: float(x[0].replace('€', '')), reverse=True)
+        else:
+            lista_ordernar_desc.sort(key=lambda x: x[0], reverse=True)
 
         # Reorganizar as linhas na Treeview
         for index, (value, dados) in enumerate(lista_ordernar_desc):
@@ -460,8 +459,6 @@ class VerDFrame(tk.Frame):
     def tabela_header_click_normal(self, coluna):
         self.filtrar()
         self.tabela.heading(coluna, command=lambda: self.tabela_header_click_asc(coluna))
-
-    
 
 
 class AtualizarSaldoFrame(tk.Frame):
@@ -475,21 +472,22 @@ class AtualizarSaldoFrame(tk.Frame):
         self.controller = Controller(modal)
 
         self.saldo_label = tk.Label(self, text="Atualizar Saldo:").grid(row=2, column=0, sticky='w')
-        self.saldo_entry = ttk.Entry(self, validate='key',validatecommand=(self.verificar_numero, '%P'))
+        self.saldo_entry = ttk.Entry(self, validate='key', validatecommand=(self.verificar_numero, '%P'))
         self.saldo_entry.grid(row=2, column=1, sticky='e')
 
-        self.saldo_add = tk.Button(self, text="Adicionar", command=lambda:self.f_balanco(1))
+        self.saldo_add = tk.Button(self, text="Adicionar", command=lambda: self.f_balanco(1))
         self.saldo_add.grid(row=2, column=3)
 
-        self.saldo_remove = tk.Button(self, text="Remover", command=lambda:self.f_balanco(2))
+        self.saldo_remove = tk.Button(self, text="Remover", command=lambda: self.f_balanco(2))
         self.saldo_remove.grid(row=3, column=3)
 
-        self.balanco = tk.Label(self, text="Saldo Atual:   " + str(self.controller.get_modal().get_current_user().get_balance()) + "€")
+        self.balanco = tk.Label(self, text="Saldo Atual:   " + str(
+            self.controller.get_modal().get_current_user().get_balance()) + "€")
         self.balanco.grid(row=4, column=0, sticky='w')
-  
+
         self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).grid(
             column=1, row=6, sticky='s')
-        
+
     def verificar_numero(self, valor):
         try:
             float(valor)
@@ -497,18 +495,19 @@ class AtualizarSaldoFrame(tk.Frame):
         except ValueError:
             return False
 
-    def f_balanco(self,numb):
+    def f_balanco(self, numb):
         saldo = self.saldo_entry.get()
         if saldo.isnumeric():
             if numb == 1:
-                self.controller.get_modal().get_current_user().set_balance(self.controller.get_modal().get_current_user().get_balance()+int(saldo))
+                self.controller.get_modal().get_current_user().set_balance(
+                    self.controller.get_modal().get_current_user().get_balance() + int(saldo))
             else:
-                self.controller.get_modal().get_current_user().set_balance(self.controller.get_modal().get_current_user().get_balance()-int(saldo))
+                self.controller.get_modal().get_current_user().set_balance(
+                    self.controller.get_modal().get_current_user().get_balance() - int(saldo))
 
             showinfo('Sucesso', 'Saldo Atualizado com sucesso')
-            self.balanco.config(text="Saldo Atual:   " + str(self.controller.get_modal().get_current_user().get_balance()) + "€")
+            self.balanco.config(
+                text="Saldo Atual:   " + str(self.controller.get_modal().get_current_user().get_balance()) + "€")
             self.controller.get_modal().save_to_json()
         else:
             showerror('Erro', 'Saldo Inválido')
-
-
