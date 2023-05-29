@@ -468,32 +468,47 @@ class AtualizarSaldoFrame(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         self.master.title("Atualizar Saldo")
+        self.verificar_numero = (self.register(self.verificar_numero))
+
         self.filters = {}
         self.master.resizable(False, False)
         self.controller = Controller(modal)
 
-        self.saldo = tk.Label(self, text="Atualizar Saldo:").grid(row=2, column=0, sticky='w')
-        self.saldo = ttk.Entry(self)
-        self.saldo.grid(row=2, column=1, sticky='e')
+        self.saldo_label = tk.Label(self, text="Atualizar Saldo:").grid(row=2, column=0, sticky='w')
+        self.saldo_entry = ttk.Entry(self, validate='key',validatecommand=(self.verificar_numero, '%P'))
+        self.saldo_entry.grid(row=2, column=1, sticky='e')
 
-        self.saldo_atualizar = tk.Button(self, text="Atualizar", command=self.atualizar)
-        self.saldo_atualizar.grid(row=2, column=3)
+        self.saldo_add = tk.Button(self, text="Adicionar", command=lambda:self.f_balanco(1))
+        self.saldo_add.grid(row=2, column=3)
 
-        self.limite = tk.Label(self, text="Limite Mensal:").grid(row=4, column=0, sticky='w')
-        self.limite_mensal = ttk.Entry(self)
-        self.limite_mensal.grid(row=4, column=1, sticky='e')
+        self.saldo_remove = tk.Button(self, text="Remover", command=lambda:self.f_balanco(2))
+        self.saldo_remove.grid(row=3, column=3)
 
-        self.saldo_atualizar = tk.Button(self, text="Adicionar Limite")
-        self.saldo_atualizar.grid(row=4, column=3)
-
+        self.balanco = tk.Label(self, text="Saldo Atual:   " + str(self.controller.get_modal().get_current_user().get_balance()) + "€")
+        self.balanco.grid(row=4, column=0, sticky='w')
+  
         self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).grid(
             column=1, row=6, sticky='s')
+        
+    def verificar_numero(self, valor):
+        try:
+            float(valor)
+            return True
+        except ValueError:
+            return False
 
-    def atualizar(self):
-        saldo = self.saldo.get()
+    def f_balanco(self,numb):
+        saldo = self.saldo_entry.get()
         if saldo.isnumeric():
-            self.controller.get_modal().get_current_user().set_balance(int(saldo))
+            if numb == 1:
+                self.controller.get_modal().get_current_user().set_balance(self.controller.get_modal().get_current_user().get_balance()+int(saldo))
+            else:
+                self.controller.get_modal().get_current_user().set_balance(self.controller.get_modal().get_current_user().get_balance()-int(saldo))
+
             showinfo('Sucesso', 'Saldo Atualizado com sucesso')
+            self.balanco.config(text="Saldo Atual:   " + str(self.controller.get_modal().get_current_user().get_balance()) + "€")
+            self.controller.get_modal().save_to_json()
         else:
             showerror('Erro', 'Saldo Inválido')
+
 
