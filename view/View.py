@@ -61,7 +61,7 @@ class MainFrame(tk.Frame):
 
         self.login_button = tk.Button(self, text="Iniciar Sessão", font=("Comic Sans MS", 12), bg="#6b778d",
                                       fg="#17223b",
-                                      command=self.login)
+                                      command=self.f_login)
         self.login_button.grid(row=4, column=1)
 
         self.create_button = tk.Button(self, text="Criar Utilizador", font=("Comic Sans MS", 12), bg="#6b778d",
@@ -73,11 +73,11 @@ class MainFrame(tk.Frame):
                               command=lambda: self.sair())
         self.exit.grid(row=5, column=0)
 
-    def sair(self):
+    def f_sair(self):
         modal.save_to_json()
         self.master.destroy()
 
-    def login(self):
+    def f_login(self):
         user = self.user_entry.get()
         password = self.password_entry.get()
 
@@ -100,8 +100,8 @@ class RegisterFrame(tk.Frame):
         tk.Frame.__init__(self, master, bg="#17223b")
         self.master.title('Criar Utilizador')
         self.master.resizable(False, False)
-        self.verificar_numb = (self.register(self.verficar_nif))
-        self.verificar_espaco = (self.register(self.verficar_espac))
+        self.verificar_numb = (self.register(self.f_verficar_nif))
+        self.verificar_espaco = (self.register(self.f_verficar_espac))
         self.user_controller = Controller(modal)
 
         self.create_user_label = tk.Label(self, text="Username:", font=("Comic Sans MS", 14), bg="#17223b",
@@ -132,14 +132,14 @@ class RegisterFrame(tk.Frame):
         self.rep_password_entry.grid(row=3, column=1)
 
         self.register_button = tk.Button(self, text="Registar Utilizador", font=("Comic Sans MS", 12), bg="#6b778d",
-                                         fg="#17223b", command=lambda: self.registar())
+                                         fg="#17223b", command=lambda: self.f_registar())
         self.register_button.grid(row=4, column=1)
 
         self.voltar_button = tk.Button(self, text="Voltar", font=("Comic Sans MS", 10), bg="#6b778d", fg="#17223b",
                                        command=lambda: master.switch_frame(MainFrame))
         self.voltar_button.grid(row=4, column=0)
 
-    def registar(self):
+    def f_registar(self):
         user = self.create_user_entry.get()
         password = self.create_password_entry.get()
         nif = self.create_nif_entry.get()
@@ -165,14 +165,14 @@ class RegisterFrame(tk.Frame):
             showerror('Erro', response)
 
     # Limitar o que o User pode escrever
-    def verficar_nif(self, digito):
+    def f_verficar_nif(self, digito):
         if str.isdigit(digito) and len(digito) <= 9:
 
             return True
         else:
             return False
 
-    def verficar_espac(self, P):
+    def f_verficar_espac(self, P):
         if re.search(r"^\w*$", P):  # O re é o RegEx basicamente o que faz é ver se a string contém X padrão
             # O \W é equivalente a [^a-zA-Z0-9] o *$ basicamente é para que corra na string toda inves de so no 1º char
             return True
@@ -217,7 +217,7 @@ class CreateDFrame(tk.Frame):
         self.user_controller = Controller(modal)
         self.master.title("Criar Despesa")
         self.master.resizable(False, False)
-        self.verificar_numero = (self.register(self.verificar_numero))
+        self.verificar_numero = (self.register(f_verificar_numero))
         self.selected_date = None
 
         self.categoria_label = tk.Label(self, text="Categoria*:", font=("Comic Sans MS", 14), bg="#17223b",
@@ -246,23 +246,14 @@ class CreateDFrame(tk.Frame):
         self.descricao_entry.grid(row=3, column=1)
 
         self.registar = tk.Button(self, text="Registar Despesa", font=("Comic Sans MS", 12), bg="#6b778d",
-                                  fg="#17223b", command=self.criar_despesa)
+                                  fg="#17223b", command=self.f_criar_despesa)
         self.registar.grid(row=4, column=1)
 
         self.retroceder = tk.Button(self, text="Voltar", font=("Comic Sans MS", 12), bg="#6b778d",
                                     fg="#17223b", command=lambda: master.switch_frame(SessionFrame))
         self.retroceder.grid(row=4, column=0)
 
-    # A cada click vai validar se o que o User pos se dá para converter para float
-    def verificar_numero(self, valor):
-
-        try:
-            float(valor)
-            return True
-        except ValueError:
-            return False
-
-    def criar_despesa(self):
+    def f_criar_despesa(self):
         categoria = self.categoria_combo.get()
         valor = self.valor_entry.get()
         data = self.calendar.get_date()
@@ -296,6 +287,7 @@ class VerDFrame(tk.Frame):
         self.filters = {}
         self.master.resizable(False, False)
         self.controller = Controller(modal)
+        self.verificar_numero = (self.register(f_verificar_numero))
 
         self.cor_tabela = ttk.Style(self)
         self.cor_tabela.configure("Treeview.Heading", background="#6b778d", foreground="#17223b",
@@ -304,13 +296,14 @@ class VerDFrame(tk.Frame):
         self.tabela = ttk.Treeview(self, columns=["category", "description", "value", "timestamp"],
                                    show='headings', selectmode='browse', style="Treeview")
 
-        self.tabela.heading("category", text="Category", command=lambda: self.tabela_header_click_asc("category"))
+        self.tabela.heading("category", text="Category", command=lambda: self.f_tabela_header_click_asc("category"))
         self.tabela.heading("description", text="Description",
-                            command=lambda: self.tabela_header_click_asc("description"))
-        self.tabela.heading("value", text="Value", command=lambda: self.tabela_header_click_asc("value"))
-        self.tabela.heading("timestamp", text="Date", command=lambda: self.tabela_header_click_asc("timestamp"))
+                            command=lambda: self.f_tabela_header_click_asc("description"))
+        self.tabela.heading("value", text="Value", command=lambda: self.f_tabela_header_click_asc("value"))
+        self.tabela.heading("timestamp", text="Date", command=lambda: self.f_tabela_header_click_asc("timestamp"))
 
-        self.preencher_tabela()
+        self.f_preencher_tabela()
+        
 
         self.tabela.grid(row=0, column=0, columnspan=2)
 
@@ -319,29 +312,38 @@ class VerDFrame(tk.Frame):
         self.categoria_filtrar = ttk.Combobox(self, values=self.controller.get_all_category_names(), state='readonly')
         self.categoria_filtrar.grid(row=1, column=0, sticky='s')
 
-        self.value_min = tk.Label(self, text="Valor Mínimo:", font=("Comic Sans MS", 14), bg="#17223b",
+        self.value_min_label = tk.Label(self, text="Valor Mínimo:", font=("Comic Sans MS", 14), bg="#17223b",
                                   fg="#ffa200").grid(row=2, column=0, sticky='w')
-        self.value_min = tk.Entry(self, bg="#6b778d", fg="#17223b")
+        self.value_min = tk.Entry(self, bg="#6b778d", fg="#17223b",validate='key', validatecommand=(self.verificar_numero, '%P'))
         self.value_min.grid(row=2, column=0, sticky='s')
 
-        self.value_max = tk.Label(self, text="Valor Máximo:", font=("Comic Sans MS", 14), bg="#17223b",
+        self.value_max_label = tk.Label(self, text="Valor Máximo:", font=("Comic Sans MS", 14), bg="#17223b",
                                   fg="#ffa200").grid(row=3, column=0, sticky='w')
-        self.value_max = tk.Entry(self, bg="#6b778d", fg="#17223b")
+        self.value_max = tk.Entry(self, bg="#6b778d", fg="#17223b",validate='key', validatecommand=(self.verificar_numero, '%P'))
         self.value_max.grid(row=3, column=0, sticky='s')
 
-        self.date_min = tk.Label(self, text="Data Minima:", font=("Comic Sans MS", 14), bg="#17223b",
+        self.date_min_label = tk.Label(self, text="Data Minima:", font=("Comic Sans MS", 14), bg="#17223b",
                                  fg="#ffa200").grid(row=4, column=0, sticky='w')
         self.data_min = DateEntry(self, width=16, foreground="white", bd=2, dateformat=4, date_pattern='YYYY-MM-DD')
         self.data_min.grid(row=4, column=0)
 
-        self.data_max = tk.Label(self, text="Data Maxima:", font=("Comic Sans MS", 14), bg="#17223b",
+        self.data_max_label = tk.Label(self, text="Data Maxima:", font=("Comic Sans MS", 14), bg="#17223b",
                                  fg="#ffa200").grid(row=5, column=0, sticky='w')
         self.data_max = DateEntry(self, width=16, foreground="white", bd=2, dateformat=4, date_pattern='YYYY-MM-DD')
         self.data_max.grid(row=5, column=0)
 
+        self.f_reset()
+        
+
+
         self.butao_filtrar = tk.Button(self, text="Filtrar", font=("Comic Sans MS", 12), bg="#6b778d",
-                                       fg="#17223b", command=self.filtrar)
+                                       fg="#17223b", command=self.f_filtrar)
         self.butao_filtrar.grid(row=7, column=0, sticky='w')
+
+        self.butao_reset = tk.Button(self, text="Reset", font=("Comic Sans MS", 12), bg="#6b778d",
+                                       fg="#17223b", command=self.f_reset)
+        self.butao_reset.grid(row=7, column=0)
+
 
         self.sugestao = tk.Label(self, font=("Comic Sans MS", 14), bg="#17223b",
                                  fg="#ffa200")
@@ -354,6 +356,14 @@ class VerDFrame(tk.Frame):
         self.retroceder = tk.Button(self, text="Voltar", font=("Comic Sans MS", 12), bg="#6b778d",
                                     fg="#17223b", command=lambda: master.switch_frame(SessionFrame)).grid(
             column=0, row=8, sticky='e')
+        
+    def f_reset(self):
+        self.f_preencher_tabela()
+        self.categoria_filtrar.set('')
+        self.value_min.delete(0,'end')
+        self.value_max.delete(0,'end')
+        self.data_max.delete(0,'end')
+        self.data_min.delete(0,'end')
 
     def f_sugestao(self):
         lista = self.controller.get_suggestions()
@@ -367,7 +377,7 @@ class VerDFrame(tk.Frame):
                 node = node.get_node()
                 self.sugestao.config(text='Sugestão: ' + category.get_name())
 
-    def filtrar(self):
+    def f_filtrar(self):
         category_name = self.categoria_filtrar.get() if self.categoria_filtrar.get() != "" else None
         category = self.controller.get_category_by_name(category_name)
         categories = []
@@ -375,7 +385,7 @@ class VerDFrame(tk.Frame):
         value_minimum = int(self.value_min.get()) if self.value_min.get() != "" else None
         value_maximum = int(self.value_max.get()) if self.value_max.get() != "" else None
 
-        if self.data_min.get_date() < self.data_max.get_date():
+        if self.data_min.get_date() <= self.data_max.get_date() and (self.data_min.get_date() is not None or self.data_max.get_date() is not None):
             date_minimum = self.data_min.get_date()
             date_maximum = self.data_max.get_date()
 
@@ -413,13 +423,16 @@ class VerDFrame(tk.Frame):
                  str(datetime.fromtimestamp(data.get_timestamp()))))
                 node = node.get_node()
 
-    def preencher_tabela(self):
+    def f_preencher_tabela(self):
 
         expenses = self.controller.get_expenses_filtered(user=modal.get_current_user())
 
         if expenses is None:
             showerror('Error', 'Sem despesas para mostrar')
         else:
+            for i in self.tabela.get_children():
+                self.tabela.delete(i)
+
             node = expenses.get_first()
 
             while node is not None:
@@ -432,7 +445,7 @@ class VerDFrame(tk.Frame):
                  str(datetime.fromtimestamp(data.get_timestamp()))))
                 node = node.get_node()
 
-    def tabela_header_click_asc(self, coluna):
+    def f_tabela_header_click_asc(self, coluna):
         lista_ordernar_asc = [(self.tabela.set(dados, coluna), dados) for dados in self.tabela.get_children('')]
 
         if coluna == "value":
@@ -442,9 +455,9 @@ class VerDFrame(tk.Frame):
 
         for index, (value, dados) in enumerate(lista_ordernar_asc):
             self.tabela.move(dados, "", index)
-        self.tabela.heading(coluna, command=lambda: self.tabela_header_click_desc(coluna))
+        self.tabela.heading(coluna, command=lambda: self.f_tabela_header_click_desc(coluna))
 
-    def tabela_header_click_desc(self, coluna):
+    def f_tabela_header_click_desc(self, coluna):
         # Obter os dados da Treeview
         lista_ordernar_desc = [(self.tabela.set(dados, coluna), dados) for dados in self.tabela.get_children("")]
 
@@ -458,11 +471,11 @@ class VerDFrame(tk.Frame):
         for index, (value, dados) in enumerate(lista_ordernar_desc):
             self.tabela.move(dados, "", index)
         # Alternar a direção da classificação ao clicar novamente no header
-        self.tabela.heading(coluna, command=lambda: self.tabela_header_click_normal(coluna))
+        self.tabela.heading(coluna, command=lambda: self.f_tabela_header_click_normal(coluna))
 
-    def tabela_header_click_normal(self, coluna):
-        self.filtrar()
-        self.tabela.heading(coluna, command=lambda: self.tabela_header_click_asc(coluna))
+    def f_tabela_header_click_normal(self, coluna):
+        self.f_filtrar()
+        self.tabela.heading(coluna, command=lambda: self.f_tabela_header_click_asc(coluna))
 
 
 class CriarCategoria(tk.Frame):
@@ -492,8 +505,13 @@ class CriarCategoria(tk.Frame):
 class AtualizarSaldoFrame(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
+<<<<<<< Updated upstream
         self.master.title("Atualizar Limite")
         self.verificar_numero = (self.register(self.verificar_numero))
+=======
+        self.master.title("Atualizar Saldo")
+        self.verificar_numero = (self.register(f_verificar_numero))
+>>>>>>> Stashed changes
 
         self.filters = {}
         self.master.resizable(False, False)
@@ -516,13 +534,6 @@ class AtualizarSaldoFrame(tk.Frame):
         self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).grid(
             column=1, row=6, sticky='s')
 
-    def verificar_numero(self, valor):
-        try:
-            float(valor)
-            return True
-        except ValueError:
-            return False
-
     def f_balanco(self, numb):
         saldo = self.saldo_entry.get()
         if saldo.isnumeric():
@@ -538,3 +549,12 @@ class AtualizarSaldoFrame(tk.Frame):
             self.controller.get_modal().save_to_json()
         else:
             showerror('Erro', 'Saldo Inválido')
+
+
+#Global Function para validar os campos numericos
+def f_verificar_numero(valor):
+    try:
+        float(valor)
+        return True
+    except ValueError:
+        return False
