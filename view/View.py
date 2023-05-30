@@ -505,8 +505,13 @@ class CriarCategoria(tk.Frame):
 class AtualizarSaldoFrame(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
+<<<<<<< Updated upstream
+        self.master.title("Atualizar Limite")
+        self.verificar_numero = (self.register(self.verificar_numero))
+=======
         self.master.title("Atualizar Saldo")
         self.verificar_numero = (self.register(f_verificar_numero))
+>>>>>>> Stashed changes
 
         self.filters = {}
         self.master.resizable(False, False)
