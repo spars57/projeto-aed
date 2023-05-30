@@ -194,11 +194,15 @@ class SessionFrame(tk.Frame):
                                fg="#17223b", command=lambda: master.switch_frame(CreateDFrame))
         self.criar.pack()
 
+        self.ver = tk.Button(self, text="Criar Categoria", font=("Comic Sans MS", 12), bg="#6b778d",
+                             fg="#17223b", command=lambda: master.switch_frame(CriarCategoria))
+        self.ver.pack()
+
         self.ver = tk.Button(self, text="Vizualizar Despesa", font=("Comic Sans MS", 12), bg="#6b778d",
                              fg="#17223b", command=lambda: master.switch_frame(VerDFrame))
         self.ver.pack()
 
-        self.ver = tk.Button(self, text="Atualizar Saldo", font=("Comic Sans MS", 12), bg="#6b778d",
+        self.ver = tk.Button(self, text="Atualizar Limite", font=("Comic Sans MS", 12), bg="#6b778d",
                              fg="#17223b", command=lambda: master.switch_frame(AtualizarSaldoFrame))
         self.ver.pack()
 
@@ -461,17 +465,41 @@ class VerDFrame(tk.Frame):
         self.tabela.heading(coluna, command=lambda: self.tabela_header_click_asc(coluna))
 
 
+class CriarCategoria(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self, master)
+        self.master.title("Criar Categoria")
+
+        self.master.resizable(False, False)
+        self.controller = Controller(modal)
+
+        self.category_label = tk.Label(self, text="Nome da Categoria").grid(row=2, column=0, sticky='w')
+        self.category_entry = ttk.Entry(self, validate='key')
+        self.category_entry.grid(row=2, column=1, sticky='e')
+
+        self.button = tk.Button(self, text="Criar", command=lambda: self.create_category())
+        self.button.grid(row=2, column=3)
+
+        self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).grid(
+            column=1, row=6, sticky='s')
+
+    def create_category(self):
+        res = self.controller.create_category(self.category_entry.get())
+        print(res)
+        showinfo("Info", res)
+
+
 class AtualizarSaldoFrame(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        self.master.title("Atualizar Saldo")
+        self.master.title("Atualizar Limite")
         self.verificar_numero = (self.register(self.verificar_numero))
 
         self.filters = {}
         self.master.resizable(False, False)
         self.controller = Controller(modal)
 
-        self.saldo_label = tk.Label(self, text="Atualizar Saldo:").grid(row=2, column=0, sticky='w')
+        self.saldo_label = tk.Label(self, text="Atualizar Limite:").grid(row=2, column=0, sticky='w')
         self.saldo_entry = ttk.Entry(self, validate='key', validatecommand=(self.verificar_numero, '%P'))
         self.saldo_entry.grid(row=2, column=1, sticky='e')
 
@@ -481,7 +509,7 @@ class AtualizarSaldoFrame(tk.Frame):
         self.saldo_remove = tk.Button(self, text="Remover", command=lambda: self.f_balanco(2))
         self.saldo_remove.grid(row=3, column=3)
 
-        self.balanco = tk.Label(self, text="Saldo Atual:   " + str(
+        self.balanco = tk.Label(self, text="Limite Atual:   " + str(
             self.controller.get_modal().get_current_user().get_balance()) + "€")
         self.balanco.grid(row=4, column=0, sticky='w')
 
@@ -505,7 +533,6 @@ class AtualizarSaldoFrame(tk.Frame):
                 self.controller.get_modal().get_current_user().set_balance(
                     self.controller.get_modal().get_current_user().get_balance() - int(saldo))
 
-            showinfo('Sucesso', 'Saldo Atualizado com sucesso')
             self.balanco.config(
                 text="Saldo Atual:   " + str(self.controller.get_modal().get_current_user().get_balance()) + "€")
             self.controller.get_modal().save_to_json()
