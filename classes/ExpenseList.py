@@ -29,7 +29,7 @@ class ExpenseList(LinkedList[Expense]):
                 first_node = first_node.get_node()
 
         if categories is not None and len(categories) > 0 and categories[0] is not None:
-            first_node = self.get_first()
+            first_node = final_list.get_first()
             final_list.clear()
             while first_node is not None:
                 if first_node.get_data().get_category().get_name() == categories[0].get_name():

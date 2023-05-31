@@ -11,6 +11,7 @@ class User:
         self.__password: str = password
         self.__balance: float = 0
         self.__nif: int = nif
+        self.__limit: float = 0
 
     def get_id(self) -> str:
         return self.__id
@@ -46,6 +47,13 @@ class User:
     def set_balance(self, value: float) -> TUser:
         self.__balance = value
         return self
+
+    def set_limit(self, limit: float) -> TUser:
+        self.__limit = limit
+        return self
+
+    def get_limit(self) -> float:
+        return self.__limit
 
     def json(self) -> dict:
         return self.__dict__

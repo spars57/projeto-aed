@@ -70,6 +70,7 @@ class Modal:
                 "username": user.get_username(),
                 "password": user.get_password(),
                 "balance": user.get_balance(),
+                "limit": user.get_limit(),
                 "nif": user.get_nif(),
                 "expenses": expense,
             }
@@ -100,6 +101,7 @@ class Modal:
                 )
 
                 u.set_balance(aux[key]['balance'])
+                u.set_limit(aux[key]['limit'])
 
                 self.get_user_list().insert_first(u)
 

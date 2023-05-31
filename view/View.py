@@ -198,12 +198,16 @@ class SessionFrame(tk.Frame):
                              fg="#17223b", command=lambda: master.switch_frame(CriarCategoria))
         self.ver.pack()
 
-        self.ver = tk.Button(self, text="Vizualizar Despesa", font=("Comic Sans MS", 12), bg="#6b778d",
+        self.ver = tk.Button(self, text="Visualizar Despesa", font=("Comic Sans MS", 12), bg="#6b778d",
                              fg="#17223b", command=lambda: master.switch_frame(VerDFrame))
         self.ver.pack()
 
-        self.ver = tk.Button(self, text="Atualizar Limite", font=("Comic Sans MS", 12), bg="#6b778d",
+        self.ver = tk.Button(self, text="Atualizar Saldo", font=("Comic Sans MS", 12), bg="#6b778d",
                              fg="#17223b", command=lambda: master.switch_frame(AtualizarSaldoFrame))
+        self.ver.pack()
+
+        self.ver = tk.Button(self, text="Atualizar Limite", font=("Comic Sans MS", 12), bg="#6b778d",
+                             fg="#17223b", command=lambda: master.switch_frame(AtualizarLimite))
         self.ver.pack()
 
         self.retroceder = tk.Button(self, text="Terminar Sessão", font=("Comic Sans MS", 12), bg="#6b778d",
@@ -489,7 +493,7 @@ class CriarCategoria(tk.Frame):
         showinfo("Info", res)
 
 
-class AtualizarSaldoFrame(tk.Frame):
+class AtualizarLimite(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         self.master.title("Atualizar Limite")
@@ -503,13 +507,50 @@ class AtualizarSaldoFrame(tk.Frame):
         self.saldo_entry = ttk.Entry(self, validate='key', validatecommand=(self.verificar_numero, '%P'))
         self.saldo_entry.grid(row=2, column=1, sticky='e')
 
+        self.balanco = tk.Label(self, text="Limite Atual:   " + str(
+            self.controller.get_modal().get_current_user().get_limit()) + "€")
+        self.balanco.grid(row=4, column=0, sticky='w')
+
+        self.limite_btn = tk.Button(self, text="Salvar", command=lambda: self.salvar_limite())
+        self.limite_btn.grid(row=2, column=3)
+
+        self.retroceder = tk.Button(self, text="Voltar", command=lambda: master.switch_frame(SessionFrame)).grid(
+            column=1, row=6, sticky='s')
+
+    def verificar_numero(self, valor):
+        try:
+            float(valor)
+            return True
+        except ValueError:
+            return False
+
+    def salvar_limite(self):
+        self.controller.get_modal().get_current_user().set_limit(float(self.saldo_entry.get()))
+        self.balanco.config(
+            text="Limite Atual:   " + str(self.controller.get_modal().get_current_user().get_limit()) + "€")
+
+
+class AtualizarSaldoFrame(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self, master)
+        self.master.title("Atualizar Saldo")
+        self.verificar_numero = (self.register(self.verificar_numero))
+
+        self.filters = {}
+        self.master.resizable(False, False)
+        self.controller = Controller(modal)
+
+        self.saldo_label = tk.Label(self, text="Atualizar Saldo:").grid(row=2, column=0, sticky='w')
+        self.saldo_entry = ttk.Entry(self, validate='key', validatecommand=(self.verificar_numero, '%P'))
+        self.saldo_entry.grid(row=2, column=1, sticky='e')
+
         self.saldo_add = tk.Button(self, text="Adicionar", command=lambda: self.f_balanco(1))
         self.saldo_add.grid(row=2, column=3)
 
         self.saldo_remove = tk.Button(self, text="Remover", command=lambda: self.f_balanco(2))
         self.saldo_remove.grid(row=3, column=3)
 
-        self.balanco = tk.Label(self, text="Limite Atual:   " + str(
+        self.balanco = tk.Label(self, text="Saldo Atual:   " + str(
             self.controller.get_modal().get_current_user().get_balance()) + "€")
         self.balanco.grid(row=4, column=0, sticky='w')
 
