@@ -60,16 +60,17 @@ class MainFrame(tk.Frame):
         self.password_entry.grid(row=3, column=1)
 
         self.login_button = tk.Button(self, text="Iniciar Sessão", font=("Comic Sans MS", 12), bg="#6b778d",
-                                      fg="#17223b",
+                                      fg="#17223b", width=15,
                                       command=self.f_login)
         self.login_button.grid(row=4, column=1)
 
         self.create_button = tk.Button(self, text="Criar Utilizador", font=("Comic Sans MS", 12), bg="#6b778d",
+                                       width=15,
                                        fg="#17223b",
                                        command=lambda: self.master.switch_frame(RegisterFrame))
         self.create_button.grid(row=5, column=1)
 
-        self.exit = tk.Button(self, text="Sair", font=("Comic Sans MS", 10), bg="#6b778d", fg="#17223b",
+        self.exit = tk.Button(self, text="Sair", font=("Comic Sans MS", 10), bg="#6b778d", fg="#17223b", width=15,
                               command=lambda: self.f_sair())
         self.exit.grid(row=5, column=0)
 
@@ -190,27 +191,27 @@ class SessionFrame(tk.Frame):
                               fg="#ffa200")
         self.label.pack()
 
-        self.criar = tk.Button(self, text="Criar Despesa", font=("Comic Sans MS", 12), bg="#6b778d",
+        self.criar = tk.Button(self, text="Criar Despesa", font=("Comic Sans MS", 12), bg="#6b778d", width=15,
                                fg="#17223b", command=lambda: master.switch_frame(CreateDFrame))
         self.criar.pack()
 
-        self.ver = tk.Button(self, text="Criar Categoria", font=("Comic Sans MS", 12), bg="#6b778d",
+        self.ver = tk.Button(self, text="Criar Categoria", font=("Comic Sans MS", 12), bg="#6b778d", width=15,
                              fg="#17223b", command=lambda: master.switch_frame(CriarCategoria))
         self.ver.pack()
 
-        self.ver = tk.Button(self, text="Visualizar Despesa", font=("Comic Sans MS", 12), bg="#6b778d",
+        self.ver = tk.Button(self, text="Visualizar Despesa", font=("Comic Sans MS", 12), bg="#6b778d", width=15,
                              fg="#17223b", command=lambda: master.switch_frame(VerDFrame))
         self.ver.pack()
 
-        self.ver = tk.Button(self, text="Atualizar Saldo", font=("Comic Sans MS", 12), bg="#6b778d",
+        self.ver = tk.Button(self, text="Atualizar Saldo", font=("Comic Sans MS", 12), bg="#6b778d", width=15,
                              fg="#17223b", command=lambda: master.switch_frame(AtualizarSaldoFrame))
         self.ver.pack()
 
-        self.ver = tk.Button(self, text="Atualizar Limite", font=("Comic Sans MS", 12), bg="#6b778d",
+        self.ver = tk.Button(self, text="Atualizar Limite", font=("Comic Sans MS", 12), bg="#6b778d", width=15,
                              fg="#17223b", command=lambda: master.switch_frame(AtualizarLimite))
         self.ver.pack()
 
-        self.retroceder = tk.Button(self, text="Terminar Sessão", font=("Comic Sans MS", 12), bg="#6b778d",
+        self.retroceder = tk.Button(self, text="Terminar Sessão", font=("Comic Sans MS", 12), bg="#6b778d", width=15,
                                     fg="#17223b", command=lambda: master.switch_frame(MainFrame))
         self.retroceder.pack()
 
