@@ -70,7 +70,7 @@ class MainFrame(tk.Frame):
         self.create_button.grid(row=5, column=1)
 
         self.exit = tk.Button(self, text="Sair", font=("Comic Sans MS", 10), bg="#6b778d", fg="#17223b",
-                              command=lambda: self.sair())
+                              command=lambda: self.f_sair())
         self.exit.grid(row=5, column=0)
 
     def f_sair(self):
@@ -307,7 +307,6 @@ class VerDFrame(tk.Frame):
         self.tabela.heading("timestamp", text="Date", command=lambda: self.f_tabela_header_click_asc("timestamp"))
 
         self.f_preencher_tabela()
-        
 
         self.tabela.grid(row=0, column=0, columnspan=2)
 
@@ -317,37 +316,36 @@ class VerDFrame(tk.Frame):
         self.categoria_filtrar.grid(row=1, column=0, sticky='s')
 
         self.value_min_label = tk.Label(self, text="Valor Mínimo:", font=("Comic Sans MS", 14), bg="#17223b",
-                                  fg="#ffa200").grid(row=2, column=0, sticky='w')
-        self.value_min = tk.Entry(self, bg="#6b778d", fg="#17223b",validate='key', validatecommand=(self.verificar_numero, '%P'))
+                                        fg="#ffa200").grid(row=2, column=0, sticky='w')
+        self.value_min = tk.Entry(self, bg="#6b778d", fg="#17223b", validate='key',
+                                  validatecommand=(self.verificar_numero, '%P'))
         self.value_min.grid(row=2, column=0, sticky='s')
 
         self.value_max_label = tk.Label(self, text="Valor Máximo:", font=("Comic Sans MS", 14), bg="#17223b",
-                                  fg="#ffa200").grid(row=3, column=0, sticky='w')
-        self.value_max = tk.Entry(self, bg="#6b778d", fg="#17223b",validate='key', validatecommand=(self.verificar_numero, '%P'))
+                                        fg="#ffa200").grid(row=3, column=0, sticky='w')
+        self.value_max = tk.Entry(self, bg="#6b778d", fg="#17223b", validate='key',
+                                  validatecommand=(self.verificar_numero, '%P'))
         self.value_max.grid(row=3, column=0, sticky='s')
 
         self.date_min_label = tk.Label(self, text="Data Minima:", font=("Comic Sans MS", 14), bg="#17223b",
-                                 fg="#ffa200").grid(row=4, column=0, sticky='w')
+                                       fg="#ffa200").grid(row=4, column=0, sticky='w')
         self.data_min = DateEntry(self, width=16, foreground="white", bd=2, dateformat=4, date_pattern='YYYY-MM-DD')
         self.data_min.grid(row=4, column=0)
 
         self.data_max_label = tk.Label(self, text="Data Maxima:", font=("Comic Sans MS", 14), bg="#17223b",
-                                 fg="#ffa200").grid(row=5, column=0, sticky='w')
+                                       fg="#ffa200").grid(row=5, column=0, sticky='w')
         self.data_max = DateEntry(self, width=16, foreground="white", bd=2, dateformat=4, date_pattern='YYYY-MM-DD')
         self.data_max.grid(row=5, column=0)
 
         self.f_reset()
-        
-
 
         self.butao_filtrar = tk.Button(self, text="Filtrar", font=("Comic Sans MS", 12), bg="#6b778d",
                                        fg="#17223b", command=self.f_filtrar)
         self.butao_filtrar.grid(row=7, column=0, sticky='w')
 
         self.butao_reset = tk.Button(self, text="Reset", font=("Comic Sans MS", 12), bg="#6b778d",
-                                       fg="#17223b", command=self.f_reset)
+                                     fg="#17223b", command=self.f_reset)
         self.butao_reset.grid(row=7, column=0)
-
 
         self.sugestao = tk.Label(self, font=("Comic Sans MS", 14), bg="#17223b",
                                  fg="#ffa200")
@@ -360,14 +358,14 @@ class VerDFrame(tk.Frame):
         self.retroceder = tk.Button(self, text="Voltar", font=("Comic Sans MS", 12), bg="#6b778d",
                                     fg="#17223b", command=lambda: master.switch_frame(SessionFrame)).grid(
             column=0, row=8, sticky='e')
-        
+
     def f_reset(self):
         self.f_preencher_tabela()
         self.categoria_filtrar.set('')
-        self.value_min.delete(0,'end')
-        self.value_max.delete(0,'end')
-        self.data_max.delete(0,'end')
-        self.data_min.delete(0,'end')
+        self.value_min.delete(0, 'end')
+        self.value_max.delete(0, 'end')
+        self.data_max.delete(0, 'end')
+        self.data_min.delete(0, 'end')
 
     def f_sugestao(self):
         lista = self.controller.get_suggestions()
@@ -389,7 +387,8 @@ class VerDFrame(tk.Frame):
         value_minimum = int(self.value_min.get()) if self.value_min.get() != "" else None
         value_maximum = int(self.value_max.get()) if self.value_max.get() != "" else None
 
-        if self.data_min.get_date() <= self.data_max.get_date() and (self.data_min.get_date() is not None or self.data_max.get_date() is not None):
+        if self.data_min.get_date() <= self.data_max.get_date() and (
+                self.data_min.get_date() is not None or self.data_max.get_date() is not None):
             date_minimum = self.data_min.get_date()
             date_maximum = self.data_max.get_date()
 
@@ -510,7 +509,7 @@ class AtualizarLimite(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         self.master.title("Atualizar Saldo")
-        self.verificar_numero = (self.register(f_verificar_numero))
+        self.verificar_numero = (self.register(self.verificar_numero))
 
         self.filters = {}
         self.master.resizable(False, False)
@@ -547,7 +546,7 @@ class AtualizarSaldoFrame(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         self.master.title("Atualizar Saldo")
-        self.verificar_numero = (self.register(self.verificar_numero))
+        self.verificar_numero = (self.register(f_verificar_numero))
 
         self.filters = {}
         self.master.resizable(False, False)
@@ -587,7 +586,7 @@ class AtualizarSaldoFrame(tk.Frame):
             showerror('Erro', 'Saldo Inválido')
 
 
-#Global Function para validar os campos numericos
+# Global Function para validar os campos numericos
 def f_verificar_numero(valor):
     try:
         float(valor)
